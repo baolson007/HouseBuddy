@@ -16,7 +16,7 @@
   </head>
     <body>
     <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-      <a class="navbar-brand" href="#">HouseBuddy</a>
+      <a class="navbar-brand" href="{{ url_for('home_page') }}">HouseBuddy</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -48,6 +48,19 @@
         </ul>
       </div>
     </nav>
+
+      {%  with msgs = get_flashed_messages(with_categories=true) %}
+        {% if msgs %}
+          {% for category, msg in msgs %}
+            <div class="alert alert-{{ category }}">
+              <button type="button" class="m1-2 mb-1 close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times</span>
+              </button>
+              {{ msg }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
 
       {% block content %}
 
