@@ -4,7 +4,7 @@
 {% endblock %}
 
 {% block content %}
-  <h1>{{ username }}s Maintenance Content!!! </h1>
+  <h1>My Maintenance Tasks</h1>
 
   <p></p>
 
@@ -28,8 +28,8 @@
               <td>{{ item.description}}</td>
               <td>{{ item.dueDate}}</td>
               <td>
-                <button class="btn btn-outline btn-info">More Info</button>
-                <button class="btn btn-outline btn-success">some other button</button>
+                <button class="btn btn-outline btn-info">Edit</button>
+                <button class="btn btn-outline btn-success">Mark as Complete</button>
               </td>
             </tr>
           {% endfor %}

@@ -1,6 +1,7 @@
 from housebuddy import app
 from flask import render_template
 from housebuddy.models import MaintenanceItem
+from housebuddy.forms import RegisterForm
 
 @app.route('/')
 @app.route('/home')
@@ -27,3 +28,8 @@ def my_files():
 def maintenance():
     items = MaintenanceItem.query.all()
     return render_template('maintenance.html', items=items, username = 'TestUser');
+
+@app.route('/register')
+def register():
+    form = RegisterForm()
+    return render_template('register.html', form=form)

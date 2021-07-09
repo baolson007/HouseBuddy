@@ -10,7 +10,7 @@ class User(db.Model):
     first_name = db.Column(db.String(length=20), nullable=True)
     last_name = db.Column(db.String(length=20), nullable=True)
     #home-address?
-    MaintenanceItems=db.relationship('MaintenanceItem', backref='owner', lazy=True) #sqlAlchemy lazy
+    MaintenanceItems=db.relationship('MaintenanceItem', backref='item_owner', lazy=True) #sqlAlchemy lazy
 
     def __repr__(self):
         return f'Username: {self.username}'
@@ -18,7 +18,7 @@ class User(db.Model):
 #class HomeAddress(db.Model):
 
 class MaintenanceItem(db.Model):
-    #__tablename__= 'MaintenanceItem'
+    __tablename__= 'MaintenanceItem'
     maintenanceID = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(length=30), nullable=False, unique=True)
     description = db.Column(db.String(length=500), nullable=False)
