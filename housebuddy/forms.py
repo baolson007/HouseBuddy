@@ -21,3 +21,8 @@ class RegisterForm(FlaskForm):
 	password = PasswordField(label='Password:', validators=[Length(min=6), DataRequired()])
 	password_confirm = PasswordField(label='Confirm Password:', validators=[EqualTo('password'), DataRequired()])
 	submit = SubmitField(label='Register Account')
+
+class LoginForm(FlaskForm):
+	username = StringField(label='User Name:', validators=[DataRequired()])
+	password = PasswordField(label='Password:', validators=[DataRequired()])
+	submit = SubmitField(label='Sign in to HouseBuddy!')
