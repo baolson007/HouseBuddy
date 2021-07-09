@@ -5,25 +5,32 @@ Registration Page
 {% endblock %}
 
 {% block content%}
+<body class="text-center">
+	<div class="container">
+		<form method="POST" class="form-register" style="color:white"> 
+		
+		<h1 class="h3 mb-3 font-weight-normal">
+		Create A New Account
+		</h1>
+		<br>
 
-	<form method="POST" class="form-register" style="color:white"> 
-		<div class="container">
-			{{ form.username.label() }}
+			<!--{{ form.username.label() }}-->
 			{{ form.username(class="form-control", placeholder = "User Name") }}
-
-			{{ form.email.label() }}
+			<br>
+			<!--{{ form.email.label() }}-->
 			{{ form.email(class="form-control", placeholder = "Email Address") }}
-
-			{{ form.password.label() }}
+			<br>
+			<!--{{ form.password.label() }}-->
 			{{ form.password(class="form-control", placeholder = "Password") }}
-
-			{{ form.password_confirm.label() }}
+			<br>
+			<!--{{ form.password_confirm.label() }}-->
 			{{ form.password_confirm(class="form-control", placeholder = "Confirm Password") }}
-
-			{{ form.username.label() }}
-			{{ form.username(class="form-control", placeholder = "User Name") }}
-
-		</div>
-	</form>
-
+			<br>
+			<!--{{ form.username.label() }}-->
+			{{ form.submit(class="btn btn-lg btn-block btn-primary") }}
+		
+		
+		</form>
+	</div>
+</body>
 {% endblock %}
