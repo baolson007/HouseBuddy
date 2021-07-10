@@ -15,7 +15,15 @@ class User(db.Model, UserMixin):
     first_name = db.Column(db.String(length=20), nullable=True)
     last_name = db.Column(db.String(length=20), nullable=True)
     #home-address?
+    total_cost = db.Column(db.Numeric(), nullable=True)
     MaintenanceItems=db.relationship('MaintenanceItem', backref='item_owner', lazy=True) #sqlAlchemy lazy
+
+    #@property 
+    #def total_cost_formatted(self):
+    #    if len(str(self.total_cost)) >= 4:
+    #        return f'${str(self.total_cost)[:-3]},{str(self.total_cost)[-3:]}'
+     #   else:
+    #        return f'${str(self.total_cost)}'
 
     @property
     def password(self):
@@ -42,6 +50,7 @@ class MaintenanceItem(db.Model):
     #completionStatus = db.Column(db.Integer(), default=0, unique=False)
     #completionDate = db.Column(db.DateTime, nullable =True, default=datetime.fromisoformat('1900-01-01'))
     owner = db.Column(db.Integer(), db.ForeignKey('user.id'))
+    cost = db.Column(db.Numeric(), nullable=True)
 
     def __repr__(self):
         return f'Maintenance: {self.name}'

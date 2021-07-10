@@ -10,4 +10,5 @@ app.config['SECRET_KEY'] = 'd488cab1ea81773f2583d911' #CHANGE THIS PRIOR TO DEPL
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
+
 from housebuddy import routes

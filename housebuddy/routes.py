@@ -3,7 +3,7 @@ from flask import render_template, redirect, url_for, flash
 from housebuddy.models import MaintenanceItem, User
 from housebuddy.forms import RegisterForm, LoginForm
 from housebuddy import db
-from flask_login import login_user
+from flask_login import login_user, logout_user
 
 @app.route('/')
 @app.route('/home')
@@ -61,3 +61,10 @@ def login():
         else:
             flash('Username and\\or password do not match. Please try again', category='danger')
     return render_template('login.html', form=form)
+
+
+@app.route('/logout', methods=['GET', 'POST'])
+def logout():
+    logout_user()
+    flash("Succesfully Logged Out", category='info')
+    return redirect(url_for('home_page'))

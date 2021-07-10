@@ -4,6 +4,31 @@
 {% endblock %}
 
 {% block content %}
-  <h1>Welcome To HouseBuddy!</h1>
-  <h3> subtitle </h3>
+<body class="text-center">
+  <h1>Welcome To HouseBuddy</h1>
+  <p class="lead font-weight-normal">
+  Access your maintenance records and see what's due soon by logging in below!
+  </p>
+
+  <div class="checkbox mb-3">
+    <a class="btn btn-lg btn-primary" href="{{ url_for('login') }}">Login</a>
+  </div>
+
+  <br>
+  
+  <h2 class="lead font-weight-normal">
+    New to HouseBuddy?
+  </h2>
+  <div class="checkbox mb-3">
+    <a class="btn btn-lg btn-primary" href="#">Take A Tour</a>
+  </div>
+
+  <br>
+
+  <div class="checkbox mb-3">
+    <h5> Need an account? </h5>
+    <a class="btn btn-sm btn-secondary" href="{{ url_for('register') }}">Register</a>
+  </div>
+
+</body>
 {% endblock %}
