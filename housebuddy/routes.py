@@ -1,9 +1,9 @@
 from housebuddy import app
-from flask import render_template, redirect, url_for, flash
+from flask import render_template, redirect, url_for, flash, request
 from housebuddy.models import MaintenanceItem, User
-from housebuddy.forms import RegisterForm, LoginForm
+from housebuddy.forms import RegisterForm, LoginForm, AddItemForm
 from housebuddy import db
-from flask_login import login_user, logout_user
+from flask_login import login_user, logout_user, current_user
 
 @app.route('/')
 @app.route('/home')
@@ -28,8 +28,32 @@ def my_files():
 
 @app.route('/maintenance')
 def maintenance():
-    items = MaintenanceItem.query.all()
-    return render_template('maintenance.html', items=items, username = 'TestUser');
+    if current_user.is_authenticated:
+        #items = MaintenanceItem.query.all()
+        items = MaintenanceItem.query.filter_by(owner=current_user.id)
+        return render_template('maintenance.html', items=items);
+    else:
+        flash(f'No items retrieved. Add items, or contact admin', category='info')
+        return render_template('maintenance.html', items=none);
+
+@app.route('/addItem',  methods=['GET', 'POST'])
+def add_item():
+    form = AddItemForm()
+    if form.validate_on_submit():
+        new_maintenance_item = MaintenanceItem(name=form.name.data,
+                                description=form.description.data, 
+                                dueDate=form.dueDate.data,
+                                owner=current_user.id)
+        db.session.add(new_maintenance_item)
+        db.session.commit()
+        flash(f'Item successfully added', category='success')
+        return render_template('addItem.html', form=form)
+    if form.errors != {}:
+        for msg in form.errors.values():
+            flash(f'Error in registration: {msg}', category='danger')
+        return render_template('addItem.html', form=form)
+
+    return render_template('addItem.html', form=form)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -68,3 +92,8 @@ def logout():
     logout_user()
     flash("Succesfully Logged Out", category='info')
     return redirect(url_for('home_page'))
+
+@app.route('/tour')
+def tour():
+    return 
+    render_template('tour.html')

@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import StringField, PasswordField, SubmitField, DateField #Y-m-d
 from wtforms.validators import Length, EqualTo, Email, DataRequired, ValidationError
-from housebuddy.models import User
+from housebuddy.models import User, MaintenanceItem
 
 
 class RegisterForm(FlaskForm):
@@ -26,3 +26,13 @@ class LoginForm(FlaskForm):
 	username = StringField(label='User Name:', validators=[DataRequired()])
 	password = PasswordField(label='Password:', validators=[DataRequired()])
 	submit = SubmitField(label='Sign in to HouseBuddy!')
+
+class AddItemForm(FlaskForm):
+    name = StringField(label='Maintenance Item Name', validators=[DataRequired()])
+    description = StringField(label='Description', validators=[DataRequired()])
+    dueDate = DateField(label='Due Date')
+    #completionStatus = db.Column(db.Integer(), default=0, unique=False)
+    #completionDate = db.Column(db.DateTime, nullable =True, default=datetime.fromisoformat('1900-01-01'))
+    #owner = 
+    #cost = db.Column(db.Numeric(), nullable=True)
+    submit = SubmitField(label='Add Item')
