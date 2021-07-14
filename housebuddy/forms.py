@@ -36,3 +36,14 @@ class AddItemForm(FlaskForm):
     #owner = 
     #cost = db.Column(db.Numeric(), nullable=True)
     submit = SubmitField(label='Add Item')
+
+class EditItemForm(FlaskForm):
+	name = StringField(label='Maintenance Item Name')
+	description = StringField(label='Description')
+	#dueDate=DateField(label='Due Date')
+	submit = SubmitField(label='Submit Updated Item')
+	delete = SubmitField(label='Delete Item')
+    #completionStatus = db.Column(db.Integer(), default=0, unique=False)
+    #completionDate = db.Column(db.DateTime, nullable =True, default=datetime.fromisoformat('1900-01-01'))
+    #owner = 
+    #cost = db.Column(db.Numeric(), nullable=True)

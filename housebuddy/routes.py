@@ -1,36 +1,23 @@
 from housebuddy import app
 from flask import render_template, redirect, url_for, flash, request
 from housebuddy.models import MaintenanceItem, User
-from housebuddy.forms import RegisterForm, LoginForm, AddItemForm
+from housebuddy.forms import RegisterForm, LoginForm, AddItemForm, EditItemForm
 from housebuddy import db
 from flask_login import login_user, logout_user, current_user
+from datetime import datetime
 
 @app.route('/')
 @app.route('/home')
 def home_page():
     return render_template('home.html')
 
-@app.route('/myFiles')
-def my_files():
-    files = [
-        {'dueDate':'1/3/21' , 'maintenanceItem' : 'clean gutters' , 'fileName' : 'cleanGutters.docx', 'uploadDate' : '1/3/21'},
-        {'dueDate':'12/8/21' , 'maintenanceItem' : 'pest control' , 'fileName' : 'exterminatePests.docx', 'uploadDate' : '12/25/21'},
-        {'dueDate':'4/19/21' , 'maintenanceItem' : 'asbestos removal' , 'fileName' : 'asbestosRemoval.pdf', 'uploadDate' : '5/25/21'}
 
-    ]
-    return render_template('myFiles.html', files = files, username = 'TestUser')
-
-###
-#@app.route('/overview')
-#def overview():
-#    return render_template('overview.html', username = 'TestUser')
-###
 
 @app.route('/maintenance')
 def maintenance():
     if current_user.is_authenticated:
         #items = MaintenanceItem.query.all()
-        items = MaintenanceItem.query.filter_by(owner=current_user.id)
+        items = MaintenanceItem.query.filter_by(owner=current_user.id, deleted=0)
         return render_template('maintenance.html', items=items);
     else:
         flash(f'No items retrieved. Add items, or contact admin', category='info')
@@ -47,7 +34,7 @@ def add_item():
         db.session.add(new_maintenance_item)
         db.session.commit()
         flash(f'Item successfully added', category='success')
-        return render_template('maintenance.html', form=form)
+        return render_template('maintenance.html', items=MaintenanceItem.query.filter_by(owner=current_user.id, deleted=0))
     if form.errors != {}:
         for msg in form.errors.values():
             flash(f'Error in registration: {msg}', category='danger')
@@ -55,14 +42,41 @@ def add_item():
 
     return render_template('addItem.html', form=form)
 
-@app.route('/editItem/<id>', methods=['GET','POST'])
-def edit_item(id):
-    flash(type(id))
-    #NOTE#####
-    #url_for sends param as str().
-    #######
-    return render_template('maintenance.html', items={})
+
+
+@app.route('/editItem/<item_id>', methods=['GET','POST'])
+def edit_item(item_id):
+    ##--NOTE--#############################################
+    ##  url_for() sends param as str().                   
+    ##  item_id is the MaintenanceItem id, NOT the User id
+    #######################################################
+    form = EditItemForm()
+    item_to_edit = MaintenanceItem.query.filter_by(maintenanceID=int(item_id)).first()
+
+    if form.delete.data == 1:
+        item_to_edit.deleted = 1
+        db.session.commit()
+        flash('item deleted', category='danger')
+        return redirect(url_for('maintenance'))
+
+    if form.validate_on_submit():
+        item_to_edit.name = form.name.data
+        item_to_edit.description = form.description.data
+        #item_to_edit.dueDate =form.dueDate
+        db.session.commit()
+        
+        return redirect(url_for('maintenance'))
+        #render_template('maintenance.html', items=MaintenanceItem.query.filter_by(owner=current_user.id))
+
+    if form.errors != {}:
+        for msg in form.errors.values():
+            flash(f'Error on Submit:could not edit item: {msg}', category='danger')
+    return render_template('editItem.html', form=form, item=item_to_edit)
     
+#@app.route('/delete/<item_id>', methods=['GET','POST'])
+#def delete_item(item_id):
+
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -80,6 +94,8 @@ def register():
             flash(f'Error in registration: {msg}', category='danger')
     return render_template('register.html', form=form)
 
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form=LoginForm()
@@ -96,12 +112,29 @@ def login():
     return render_template('login.html', form=form)
 
 
+
+
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
     logout_user()
     flash("Succesfully Logged Out", category='info')
     return redirect(url_for('home_page'))
 
+
+# STUB
 @app.route('/tour')
 def tour():
     return render_template('tour.html')
+
+
+
+# DUMMY FILES FOR NOW
+@app.route('/myFiles')
+def my_files():
+    files = [
+        {'dueDate':'1/3/21' , 'maintenanceItem' : 'clean gutters' , 'fileName' : 'cleanGutters.docx', 'uploadDate' : '1/3/21'},
+        {'dueDate':'12/8/21' , 'maintenanceItem' : 'pest control' , 'fileName' : 'exterminatePests.docx', 'uploadDate' : '12/25/21'},
+        {'dueDate':'4/19/21' , 'maintenanceItem' : 'asbestos removal' , 'fileName' : 'asbestosRemoval.pdf', 'uploadDate' : '5/25/21'}
+
+    ]
+    return render_template('myFiles.html', files = files)

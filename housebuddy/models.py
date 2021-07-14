@@ -51,6 +51,7 @@ class MaintenanceItem(db.Model):
     #completionDate = db.Column(db.DateTime, nullable =True, default=datetime.fromisoformat('1900-01-01'))
     owner = db.Column(db.Integer(), db.ForeignKey('user.id'))
     cost = db.Column(db.Numeric(), nullable=True)
+    deleted = db.Column(db.Integer(), nullable=True, default=0)
 
     def __repr__(self):
         return f'Maintenance: {self.name}'

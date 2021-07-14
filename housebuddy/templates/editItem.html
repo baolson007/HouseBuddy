@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Edit Item
+{% endblock %}
+
+{% block content%}
+<body class="text-center">
+	<div class="container">
+		<form method="POST" class="form-register" style="color:white"> 
+		{{ form.hidden_tag() }}
+		<h3 class="h3 mb-3 font-weight-normal">
+		Edit An Existing Maintenance Item
+		</h1>
+		<br>
+		
+			{{ form.name(class="form-control", value=item.name) }}
+			<br>
+			
+			{{ form.description(class="form-control", value=item.description) }}
+			<br>
+			
+			
+			{{ form.submit(class="btn btn-md btn-block btn-primary") }}
+
+			<br>
+			<br>
+			<br>
+			<h4 class="h4 mb-3 font-weight-normal">**Danger Area**</h4>
+			{{ form.delete(class="btn btn-md btn-block btn-danger") }} 
+
+		</form>
+	</div>
+</body>
+{% endblock %}
