@@ -55,9 +55,12 @@ def add_item():
 
     return render_template('addItem.html', form=form)
 
-@app.route('/editItem', methods=['GET','POST'])
-def edit_item():
-    #flash('id is {id}')
+@app.route('/editItem/<id>', methods=['GET','POST'])
+def edit_item(id):
+    flash(type(id))
+    #NOTE#####
+    #url_for sends param as str().
+    #######
     return render_template('maintenance.html', items={})
     
 

@@ -19,6 +19,7 @@
             <th scope="col">Description</th>
             <th scope="col">Due Date(incorrect, for testing)</th>
             <th scope="col"> Options </th>
+            <!--<th scope="col">id </th> -->
           </tr>
         </thead>
         <tbody>
@@ -27,12 +28,13 @@
          <!--  ROWs-->
             <tr>
               <td>{{ item.name }}</td>
-              <td>{{ item.description}}</td>
-              <td>{{ item.dueDate}}</td>
+              <td>{{ item.description }}</td>
+              <td>{{ item.dueDate }}</td>
               <td>
-                <a class="btn btn-outline btn-info" href="{{ url_for('edit_item') }}">Edit </a>
+                <a class="btn btn-outline btn-info" href="{{ url_for('edit_item', id=item.maintenanceID) }}">Edit </a>
                 <button class="btn btn-outline btn-success">Mark as Complete</button>
               </td>
+             <!-- <td>{{ item.maintenanceID}}</td>-->
             </tr>
           {% endfor %}
         </tbody>
