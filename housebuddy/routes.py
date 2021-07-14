@@ -34,7 +34,7 @@ def maintenance():
         return render_template('maintenance.html', items=items);
     else:
         flash(f'No items retrieved. Add items, or contact admin', category='info')
-        return render_template('maintenance.html', items=none);
+        return render_template('maintenance.html', items=none)
 
 @app.route('/addItem',  methods=['GET', 'POST'])
 def add_item():
@@ -47,13 +47,19 @@ def add_item():
         db.session.add(new_maintenance_item)
         db.session.commit()
         flash(f'Item successfully added', category='success')
-        return render_template('addItem.html', form=form)
+        return render_template('maintenance.html', form=form)
     if form.errors != {}:
         for msg in form.errors.values():
             flash(f'Error in registration: {msg}', category='danger')
         return render_template('addItem.html', form=form)
 
     return render_template('addItem.html', form=form)
+
+@app.route('/editItem', methods=['GET','POST'])
+def edit_item():
+    #flash('id is {id}')
+    return render_template('maintenance.html', items={})
+    
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -95,5 +101,4 @@ def logout():
 
 @app.route('/tour')
 def tour():
-    return 
-    render_template('tour.html')
+    return render_template('tour.html')
