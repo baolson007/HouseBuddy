@@ -44,9 +44,9 @@ class User(db.Model, UserMixin):
 class MaintenanceItem(db.Model):
     __tablename__= 'MaintenanceItem'
     maintenanceID = db.Column(db.Integer(), primary_key=True)
-    name = db.Column(db.String(length=30), nullable=False, unique=True)
-    description = db.Column(db.String(length=500), nullable=False)
-    dueDate = db.Column(db.DateTime, default=datetime.utcnow)
+    name = db.Column(db.String(length=30), nullable=False, unique=False)
+    description = db.Column(db.String(length=500), unique=False, nullable=False)
+    dueDate = db.Column(db.DateTime, default=None)#datetime.utcnow)
     #completionStatus = db.Column(db.Integer(), default=0, unique=False)
     #completionDate = db.Column(db.DateTime, nullable =True, default=datetime.fromisoformat('1900-01-01'))
     owner = db.Column(db.Integer(), db.ForeignKey('user.id'))
@@ -56,3 +56,4 @@ class MaintenanceItem(db.Model):
     def __repr__(self):
         return f'Maintenance: {self.name}'
 
+1

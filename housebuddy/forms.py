@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, DateField #Y-m-d
-from wtforms.validators import Length, EqualTo, Email, DataRequired, ValidationError
+from wtforms import StringField, PasswordField, SubmitField, DecimalField, DateField #Y-m-d
+from wtforms.validators import Length, EqualTo, Email, DataRequired, ValidationError, Optional
 from housebuddy.models import User, MaintenanceItem
 
 
@@ -30,17 +30,18 @@ class LoginForm(FlaskForm):
 class AddItemForm(FlaskForm):
     name = StringField(label='Maintenance Item Name', validators=[DataRequired()])
     description = StringField(label='Description', validators=[DataRequired()])
-    dueDate = DateField(label='Due Date')
+    dueDate = DateField(label='Due Date', validators=[Optional()])
     #completionStatus = db.Column(db.Integer(), default=0, unique=False)
     #completionDate = db.Column(db.DateTime, nullable =True, default=datetime.fromisoformat('1900-01-01'))
     #owner = 
-    #cost = db.Column(db.Numeric(), nullable=True)
+    cost = DecimalField(label='Cost', validators=[Optional()])
     submit = SubmitField(label='Add Item')
 
 class EditItemForm(FlaskForm):
 	name = StringField(label='Maintenance Item Name')
 	description = StringField(label='Description')
 	#dueDate=DateField(label='Due Date')
+	cost = DecimalField(label='Cost', validators=[Optional()])
 	submit = SubmitField(label='Submit Updated Item')
 	delete = SubmitField(label='Delete Item')
     #completionStatus = db.Column(db.Integer(), default=0, unique=False)

@@ -5,6 +5,7 @@ from housebuddy.forms import RegisterForm, LoginForm, AddItemForm, EditItemForm
 from housebuddy import db
 from flask_login import login_user, logout_user, current_user
 from datetime import datetime
+import decimal
 
 @app.route('/')
 @app.route('/home')
@@ -18,7 +19,11 @@ def maintenance():
     if current_user.is_authenticated:
         #items = MaintenanceItem.query.all()
         items = MaintenanceItem.query.filter_by(owner=current_user.id, deleted=0)
-        return render_template('maintenance.html', items=items);
+        item_cost_sum = decimal.Decimal(0.00)
+        for item in items:
+            if item.cost != None:
+                item_cost_sum += decimal.Decimal(round(item.cost,2))
+        return render_template('maintenance.html', items=items, item_cost_sum=round(item_cost_sum, 2))#float(item_cost_sum));
     else:
         flash(f'No items retrieved. Add items, or contact admin', category='info')
         return render_template('maintenance.html', items=none)
@@ -63,6 +68,7 @@ def edit_item(item_id):
         item_to_edit.name = form.name.data
         item_to_edit.description = form.description.data
         #item_to_edit.dueDate =form.dueDate
+        item_to_edit.cost = form.cost.data
         db.session.commit()
         
         return redirect(url_for('maintenance'))
