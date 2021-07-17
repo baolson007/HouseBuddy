@@ -56,4 +56,3 @@ class MaintenanceItem(db.Model):
     def __repr__(self):
         return f'Maintenance: {self.name}'
 
-1

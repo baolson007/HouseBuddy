@@ -19,10 +19,13 @@ Edit Item
 			
 			{{ form.description(class="form-control", value=item.description) }}
 			<br>
-			
-			{{ form.cost(class="form-control", value=item.cost) }}
+			{% if item.cost != None %}
+				{{ form.cost(class="form-control", value=item.cost|round(2)) }}
+			{% else %}
+				{{ form.cost(class="form-control", value=item.cost) }}
+			{% endif %}
 			<br>
-			
+
 			{{ form.submit(class="btn btn-md btn-block btn-primary") }}
 
 			<br>

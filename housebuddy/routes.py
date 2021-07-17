@@ -49,14 +49,14 @@ def add_item():
 
 
 
-@app.route('/editItem/<item_id>', methods=['GET','POST'])
+@app.route('/editItem/<int:item_id>', methods=['GET','POST'])
 def edit_item(item_id):
     ##--NOTE--#############################################
     ##  url_for() sends param as str().                   
     ##  item_id is the MaintenanceItem id, NOT the User id
     #######################################################
     form = EditItemForm()
-    item_to_edit = MaintenanceItem.query.filter_by(maintenanceID=int(item_id)).first()
+    item_to_edit = MaintenanceItem.query.filter_by(maintenanceID=item_id).first()
 
     if form.delete.data == 1:
         item_to_edit.deleted = 1
