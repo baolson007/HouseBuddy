@@ -1,11 +1,13 @@
 from housebuddy import app
 from flask import render_template, redirect, url_for, flash, request
 from housebuddy.models import MaintenanceItem, User
-from housebuddy.forms import RegisterForm, LoginForm, AddItemForm, EditItemForm
+from housebuddy.forms import RegisterForm, LoginForm, AddItemForm, EditItemForm, UploadForm
 from housebuddy import db
 from flask_login import login_user, logout_user, current_user
 from datetime import datetime
-import decimal
+import os, decimal
+from werkzeug.utils import secure_filename
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'doc', 'docx'}
 
 @app.route('/')
 @app.route('/home')
@@ -144,3 +146,25 @@ def my_files():
 
     ]
     return render_template('myFiles.html', files = files)
+
+def allowed_file(filename):
+    return '.' in filename and \
+        filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.route('/uploadFile', methods=['GET', 'POST'])
+def upload_file():
+    form = UploadForm()
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            flash('no file part in request')
+            return redirect(request.url)
+        file = request.files['file']
+        
+        if file and allowed_file(file.filename):
+            filename = secure_filename( str(current_user.id) + "_" + file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            flash('file ' + filename + ' successfully uploaded')
+            return redirect(url_for('my_files'))
+        else:
+            flash('File does not exist or is an invalid type of file, try again')
+    return render_template('uploadFile.html', form=form)

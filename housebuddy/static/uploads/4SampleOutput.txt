@@ -1,0 +1,70 @@
+isPrime(   0 ): false
+isPrime(   1 ): false
+isPrime(   2 ): true
+isPrime(   3 ): true
+isPrime(   4 ): false
+isPrime(   5 ): true
+isPrime(   7 ): true
+isPrime(   9 ): false
+isPrime(  11 ): true
+isPrime(  13 ): true
+isPrime(  14 ): false
+isPrime(  15 ): false
+isPrime(  17 ): true
+isPrime(  19 ): true
+
+lcm(   0,   0 ):    0
+lcm(   0,   1 ):    0
+lcm(   1,   1 ):    1
+lcm(   1,   2 ):    2
+lcm(   2,   2 ):    2
+lcm(   2,   3 ):    6
+lcm(   3,   3 ):    3
+lcm(   2,   4 ):    4
+lcm(   2,   6 ):    6
+lcm(   2,   8 ):    8
+lcm(   3,   5 ):   15
+lcm(   3,   7 ):   21
+lcm(   5,   7 ):   35
+lcm(   5,  13 ):   65
+lcm( 210,  16 ): 1680
+lcm( 125,  55 ): 1375
+lcm(  70,  34 ): 1190
+lcm(  21,  18 ):  126
+
+gcf(   0,   0 ): 0
+gcf(   0,   1 ): 0
+gcf(   1,   1 ): 1
+gcf(   1,   2 ): 1
+gcf(   2,   2 ): 2
+gcf(   2,   3 ): 1
+gcf(   3,   3 ): 3
+gcf(   2,   4 ): 2
+gcf(   2,   6 ): 2
+gcf(   2,   8 ): 2
+gcf(   3,   5 ): 1
+gcf(   3,   7 ): 1
+gcf(   5,   7 ): 1
+gcf(   5,  13 ): 1
+gcf( 210,  16 ): 2
+gcf( 125,  55 ): 5
+gcf(  70,  34 ): 2
+gcf(  21,  18 ): 3
+
+mean( -1.0, -1.0 ): -1.0000
+mean( -2.0, -2.0, 2.0 ): 0.0000
+mean( -0.1, -0.1, -0.3, -0.2 ): -0.2000
+mean( 1.0, 1.0, 0.5, -2.2, -0.3, 0.5, -0.4, 3.2 ): 0.3286
+
+median( -1.0 ): -1.0000
+median( -2.0, 2.0 ): 0.0000
+median( -0.3, -0.2, -0.1 ): -0.2000
+median( -0.8, -0.5, -0.12, 0.3, 0.6, 22.0 ): 0.0900
+median( -2.2, -0.4, -0.3, 0.5, 0.5, 1.0, 3.2 ): 0.5000
+
+factorial(  0 ): 1
+factorial(  1 ): 1
+factorial(  2 ): 2
+factorial(  3 ): 6
+factorial(  5 ): 120
+factorial( 10 ): 3,628,800

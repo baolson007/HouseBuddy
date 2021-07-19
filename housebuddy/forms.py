@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, DecimalField, DateField #Y-m-d
+from wtforms import StringField, PasswordField, SubmitField, DecimalField, FileField, DateField #Y-m-d
 from wtforms.validators import Length, EqualTo, Email, DataRequired, ValidationError, Optional
 from housebuddy.models import User, MaintenanceItem
 
@@ -48,3 +48,7 @@ class EditItemForm(FlaskForm):
     #completionDate = db.Column(db.DateTime, nullable =True, default=datetime.fromisoformat('1900-01-01'))
     #owner = 
     #cost = db.Column(db.Numeric(), nullable=True)
+
+class UploadForm(FlaskForm):
+	filename = FileField()
+	submit = SubmitField(label = "Upload File")
