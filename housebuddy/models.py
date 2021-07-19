@@ -56,3 +56,9 @@ class MaintenanceItem(db.Model):
     def __repr__(self):
         return f'Maintenance: {self.name}'
 
+class UserFile(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    filename = (db.Column(db.String(length=60), nullable=False))
+    owner = db.Column(db.Integer(), db.ForeignKey('user.id'))
+    uploadDate = db.Column(db.DateTime, default=datetime.utcnow)
+    deleted = db.Column(db.Integer(), default=0)

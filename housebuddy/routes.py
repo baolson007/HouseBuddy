@@ -1,6 +1,6 @@
 from housebuddy import app
 from flask import render_template, redirect, url_for, flash, request
-from housebuddy.models import MaintenanceItem, User
+from housebuddy.models import MaintenanceItem, User, UserFile
 from housebuddy.forms import RegisterForm, LoginForm, AddItemForm, EditItemForm, UploadForm
 from housebuddy import db
 from flask_login import login_user, logout_user, current_user
@@ -136,15 +136,16 @@ def tour():
 
 
 
-# DUMMY FILES FOR NOW
 @app.route('/myFiles')
 def my_files():
-    files = [
-        {'dueDate':'1/3/21' , 'maintenanceItem' : 'clean gutters' , 'fileName' : 'cleanGutters.docx', 'uploadDate' : '1/3/21'},
-        {'dueDate':'12/8/21' , 'maintenanceItem' : 'pest control' , 'fileName' : 'exterminatePests.docx', 'uploadDate' : '12/25/21'},
-        {'dueDate':'4/19/21' , 'maintenanceItem' : 'asbestos removal' , 'fileName' : 'asbestosRemoval.pdf', 'uploadDate' : '5/25/21'}
+    #files = [
+    #    {'dueDate':'1/3/21' , 'maintenanceItem' : 'clean gutters' , 'fileName' : 'cleanGutters.docx', 'uploadDate' : '1/3/21'},
+    #    {'dueDate':'12/8/21' , 'maintenanceItem' : 'pest control' , 'fileName' : 'exterminatePests.docx', 'uploadDate' : '12/25/21'},
+    #    {'dueDate':'4/19/21' , 'maintenanceItem' : 'asbestos removal' , 'fileName' : 'asbestosRemoval.pdf', 'uploadDate' : '5/25/21'}
 
-    ]
+    #]
+
+    files = UserFile.query.filter_by(owner=current_user.id)
     return render_template('myFiles.html', files = files)
 
 def allowed_file(filename):
@@ -159,11 +160,14 @@ def upload_file():
             flash('no file part in request')
             return redirect(request.url)
         file = request.files['file']
-        
+
         if file and allowed_file(file.filename):
             filename = secure_filename( str(current_user.id) + "_" + file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             flash('file ' + filename + ' successfully uploaded')
+            file_to_add = UserFile(owner=current_user.id, filePath=filename)
+            db.session.add(file_to_add)
+            db.session.commit()
             return redirect(url_for('my_files'))
         else:
             flash('File does not exist or is an invalid type of file, try again')

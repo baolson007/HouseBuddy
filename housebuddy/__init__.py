@@ -22,3 +22,6 @@ bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 
 from housebuddy import routes
+
+#db.create_all()
+#db.session.commit()

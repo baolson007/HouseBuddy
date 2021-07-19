@@ -4,7 +4,10 @@
 	{% endblock %}
 
   {% block content %}
-    <h1>DUMMY FILES, testing html Tables</h1>
+    <h1>My Maintenance Records</h1>
+    <br>
+    <a class="btn btn-lg btn-primary" href="{{ url_for('upload_file') }}">Upload Record</a>
+
     <p></p>
 
 	<table>
@@ -12,11 +15,10 @@
         <thead>
           <tr>
            <!-- COLUMNS -->
-            <th scope="col">Due Date</th>
-            <th scope="col">Maintenance Item</th>
             <th scope="col">File Name</th>
+            <th scope="col">Maintenance Item</th>
             <th scope="col">Upload Date</th>
-            <th scope="col"> Options </th>
+            <th scope="col">Options</th>
           </tr>
         </thead>
         <tbody>
@@ -24,13 +26,12 @@
           
          <!--  ROWs-->
 	          <tr>
-	            <td>{{ file.dueDate }}</td>
-	            <td>{{ file.maintenanceItem }}</td>
-	            <td>{{ file.fileName }}</td>
+	            <td>{{ file.filename }}</td>
+	            <td> PLACEHOLDER FOR MAINTENANCE ITEM </td>
 	            <td>{{ file.uploadDate }}</td>
 	            <td>
-	              <button class="btn btn-outline btn-info">More Info</button>
-	              <button class="btn btn-outline btn-success">some other button</button>
+	              <button class="btn btn-outline btn-info">Download</button>
+	              <button class="btn btn-outline btn-danger">Delete</button>
 	            </td>
 	          </tr>
           {% endfor %}
