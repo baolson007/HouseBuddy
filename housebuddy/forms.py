@@ -52,3 +52,4 @@ class EditItemForm(FlaskForm):
 class UploadForm(FlaskForm):
 	filename = FileField()
 	submit = SubmitField(label = "Upload File")
+	delete = SubmitField(label='Delete File')

@@ -30,8 +30,9 @@
 	            <td> PLACEHOLDER FOR MAINTENANCE ITEM </td>
 	            <td>{{ file.uploadDate }}</td>
 	            <td>
-	              <button class="btn btn-outline btn-info">Download</button>
-	              <button class="btn btn-outline btn-danger">Delete</button>
+	              
+                <a class="btn btn-default btn-success" a href="/downloadFile/{{file.filename}}" target="blank">Download</a>
+                <a class="btn btn-outline btn-danger" href="{{ url_for('delete_file', file_id=file.id) }}">Delete</a>
 	            </td>
 	          </tr>
           {% endfor %}
@@ -48,8 +49,10 @@
   </body>
   <style>
     body {
-      background-color: #212121;
+     background-color: #212121;
       color: white;
     }
   </style>
 </html>
+
+<!-- <a class="btn btn-outline btn-info" href="#">Download</a> -->

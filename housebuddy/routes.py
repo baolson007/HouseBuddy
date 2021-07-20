@@ -1,5 +1,5 @@
 from housebuddy import app
-from flask import render_template, redirect, url_for, flash, request
+from flask import render_template, redirect, url_for, flash, request, send_file
 from housebuddy.models import MaintenanceItem, User, UserFile
 from housebuddy.forms import RegisterForm, LoginForm, AddItemForm, EditItemForm, UploadForm
 from housebuddy import db
@@ -136,7 +136,7 @@ def tour():
 
 
 
-@app.route('/myFiles')
+@app.route('/myFiles', methods=['GET', 'POST'])
 def my_files():
     #files = [
     #    {'dueDate':'1/3/21' , 'maintenanceItem' : 'clean gutters' , 'fileName' : 'cleanGutters.docx', 'uploadDate' : '1/3/21'},
@@ -145,16 +145,30 @@ def my_files():
 
     #]
 
-    files = UserFile.query.filter_by(owner=current_user.id)
+    files = UserFile.query.filter_by(owner=current_user.id, deleted=0)
+
     return render_template('myFiles.html', files = files)
+
+
+@app.route('/deleteFile/<int:file_id>', methods=['GET','POST'])
+def delete_file(file_id):
+    file_to_delete = UserFile.query.filter_by(id=int(file_id)).first()
+    db.session.delete(file_to_delete)
+    db.session.commit()
+    flash('file deleted', category='success')
+
+    files = UserFile.query.filter_by(owner=current_user.id)
+    return render_template('myFiles.html', files=files)
+
 
 def allowed_file(filename):
     return '.' in filename and \
         filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@app.route('/uploadFile', methods=['GET', 'POST'])
+@app.route('/uploadFile/', methods=['GET', 'POST'])
 def upload_file():
     form = UploadForm()
+
     if request.method == 'POST':
         if 'file' not in request.files:
             flash('no file part in request')
@@ -162,13 +176,18 @@ def upload_file():
         file = request.files['file']
 
         if file and allowed_file(file.filename):
-            filename = secure_filename( str(current_user.id) + "_" + file.filename)
+            filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            flash('file ' + filename + ' successfully uploaded')
-            file_to_add = UserFile(owner=current_user.id, filePath=filename)
+            flash('file ' + filename + ' successfully uploaded', category='success')
+            file_to_add = UserFile(owner=current_user.id, filename=filename)
             db.session.add(file_to_add)
             db.session.commit()
             return redirect(url_for('my_files'))
         else:
             flash('File does not exist or is an invalid type of file, try again')
-    return render_template('uploadFile.html', form=form)
+    return render_template('uploadFile.html')#, form=form)
+
+@app.route('/downloadFile/<filename>', methods=['GET'])
+def download_file(filename):
+    file_path = app.config['UPLOAD_FOLDER'] + "//" + filename
+    return send_file(file_path, as_attachment=True, attachment_filename='')
