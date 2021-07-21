@@ -22,7 +22,7 @@ Edit Item
 			{% if item.cost != None %}
 				{{ form.cost(class="form-control", value=item.cost|round(2)) }}
 			{% else %}
-				{{ form.cost(class="form-control", value=item.cost) }}
+				{{ form.cost(class="form-control", value=0) }}
 			{% endif %}
 			<br>
 
