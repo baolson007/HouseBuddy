@@ -6,6 +6,7 @@
   {% block content %}
     <h1>My Maintenance Records</h1>
     <br>
+
     <a class="btn btn-lg btn-primary" href="{{ url_for('upload_file') }}">Upload Record</a>
 
     <p></p>
@@ -28,8 +29,8 @@
 	          <tr>
 	            <td><a href="/downloadFile/{{ file.filename }}">{{file.filename}}</a></td>
 	            <td> {% for item in items %}
-                      {% if file.maintenanceID == item.maintenanceID %}
-                        {{ item.name }}
+                    {% if item.maintenanceID == file.maintenanceID %}
+                        {{ item.name }} <a class="btn btn-sm btn-info" href="#">choose different file</a>
                     {% endif %}
                   {% endfor %}
               </td>

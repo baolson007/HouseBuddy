@@ -50,6 +50,15 @@ class EditItemForm(FlaskForm):
     #owner = 
     #cost = db.Column(db.Numeric(), nullable=True)
 
+class ItemDetailForm(FlaskForm):
+	name = StringField(label='Maintenance Item Name')
+	description = StringField(label='Description')
+	notes = StringField(label="Notes")
+	dueDate=DateField(label='Due Date')
+	cost = DecimalField(label='Cost', validators=[Optional()])
+	file = FileField()
+	submit = SubmitField(label='Submit Updated Item')
+
 #class UploadForm(FlaskForm):
 	#filename = FileField()
 	#submit = SubmitField(label = "Upload File")

@@ -11,7 +11,7 @@ import os, decimal
 from werkzeug.utils import secure_filename
 from flask_mail import Message
 
-ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'doc', 'docx'}
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'doc', 'docx', 'odt', 'xlsx' }
 
 @app.route('/')
 @app.route('/home')
@@ -228,7 +228,7 @@ def upload_file():
             db.session.add(file_to_add)
             db.session.commit()
 
-            return redirect(url_for('my_files', items=items))
+            return redirect(url_for('my_files'))
         else:
             flash('File does not exist or is an invalid type of file, try again')
     
