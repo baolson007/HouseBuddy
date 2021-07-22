@@ -13,25 +13,19 @@ Add Item
 		Add a New Maintenance Item
 		</h1>
 		<br>
-
-			
+		
 			{{ form.name(class="form-control", placeholder = "Maintenance Item Name") }}
 			<br>
 			
 			{{ form.description(class="form-control", placeholder = "Description") }}
 			<br>
 			
-			{{ form.dueDate(class="form-control", placeholder = "Due Date YYYY-mm-dd") }}
+			{{ form.dueDate(class="form-control", placeholder = "Due Date (YYYY-mm-dd)") }}
 			<br>
 
 			
 			{{ form.submit(class="btn btn-lg btn-block btn-primary") }}
-		
-		<!--	<br>
-			<div class="checkbox mb-3">
-				<h5> Already have an account? </h5>
-				<a class="btn btn-sm btn-secondary" href="{{ url_for('login') }}">Login</a>
-			</div>-->
+
 		</form>
 	</div>
 </body>
