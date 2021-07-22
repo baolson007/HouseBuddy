@@ -1,5 +1,7 @@
-from housebuddy import db, bcrypt, login_manager
-from datetime import datetime
+from housebuddy import db, bcrypt, login_manager, app
+from datetime import date, datetime
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+#import datetime
 from flask_login import UserMixin
 
 @login_manager.user_loader
@@ -17,6 +19,20 @@ class User(db.Model, UserMixin):
     #home-address?
     total_cost = db.Column(db.Numeric(), nullable=True)
     MaintenanceItems=db.relationship('MaintenanceItem', backref='item_owner', lazy=True) #sqlAlchemy lazy
+
+    def get_reset_token(self, expire_seconds=36000):
+        s = Serializer(app.config['SECRET_KEY'], expire_seconds)
+        return s.dumps({'user_id': self.id}).decode('utf-8')
+
+    @staticmethod
+    def verify_reset_token(token):
+        s = Serializer(app.config['SECRET_KEY'])
+
+        try:
+            user_id = s.loads(token)['user_id']
+        except:
+            return None
+        return User.query.get(user_id)
 
     #@property 
     #def total_cost_formatted(self):
@@ -46,9 +62,9 @@ class MaintenanceItem(db.Model):
     maintenanceID = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(length=30), nullable=False, unique=False)
     description = db.Column(db.String(length=500), unique=False, nullable=False)
-    dueDate = db.Column(db.DateTime, default=None)#datetime.utcnow)
-    #completionStatus = db.Column(db.Integer(), default=0, unique=False)
-    #completionDate = db.Column(db.DateTime, nullable =True, default=datetime.fromisoformat('1900-01-01'))
+    dueDate = db.Column(db.Date, default=None)# , strftime(‘%Y-%m-%d’)datetime.utcnow)
+    completionStatus = db.Column(db.Integer(), default=0, unique=False)
+    completionDate = db.Column(db.Date, nullable =True)
     owner = db.Column(db.Integer(), db.ForeignKey('user.id'))
     cost = db.Column(db.Numeric(), nullable=True)
     deleted = db.Column(db.Integer(), nullable=True, default=0)
@@ -60,5 +76,6 @@ class UserFile(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     filename = (db.Column(db.String(length=60), nullable=False))
     owner = db.Column(db.Integer(), db.ForeignKey('user.id'))
-    uploadDate = db.Column(db.DateTime, default=datetime.utcnow)
+    uploadDate = db.Column(db.Date, default=datetime.utcnow)#.strftime("%Y-%m-%d"))
     deleted = db.Column(db.Integer(), default=0)
+    maintenanceID = db.Column(db.Integer(), nullable=True)

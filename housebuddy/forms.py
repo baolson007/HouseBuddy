@@ -40,16 +40,31 @@ class AddItemForm(FlaskForm):
 class EditItemForm(FlaskForm):
 	name = StringField(label='Maintenance Item Name')
 	description = StringField(label='Description')
-	#dueDate=DateField(label='Due Date')
+	dueDate=DateField(label='Due Date')
 	cost = DecimalField(label='Cost', validators=[Optional()])
 	submit = SubmitField(label='Submit Updated Item')
 	delete = SubmitField(label='Delete Item')
+	#completed = SubmitField(label='Maintenance Completed')
     #completionStatus = db.Column(db.Integer(), default=0, unique=False)
     #completionDate = db.Column(db.DateTime, nullable =True, default=datetime.fromisoformat('1900-01-01'))
     #owner = 
     #cost = db.Column(db.Numeric(), nullable=True)
 
-class UploadForm(FlaskForm):
-	filename = FileField()
-	submit = SubmitField(label = "Upload File")
-	delete = SubmitField(label='Delete File')
+#class UploadForm(FlaskForm):
+	#filename = FileField()
+	#submit = SubmitField(label = "Upload File")
+	##delete = SubmitField(label='Delete File')
+
+class ResetPasswordForm(FlaskForm):
+	email = StringField(label='Email Address:', validators=[Email(), DataRequired()])
+	submit = SubmitField(label='Request Password Reset')
+
+	def validate_email(self, email_to_validate):
+		email = User.query.filter_by(email=email_to_validate.data).first()
+		if email is None:
+			raise ValidationError(f'Error submitting password reset request for \"{email_to_validate.data}\"')
+
+class NewPasswordForm(FlaskForm):
+	password = PasswordField(label='Password:', validators=[Length(min=6), DataRequired()])
+	password_confirm = PasswordField(label='Confirm Password:', validators=[EqualTo('password'), DataRequired()])
+	submit = SubmitField(label='Reset Password')
