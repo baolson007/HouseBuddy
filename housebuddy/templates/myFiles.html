@@ -27,7 +27,12 @@
          <!--  ROWs-->
 	          <tr>
 	            <td><a href="/downloadFile/{{ file.filename }}">{{file.filename}}</a></td>
-	            <td> PLACEHOLDER FOR MAINTENANCE ITEM </td>
+	            <td> {% for item in items %}
+                      {% if file.maintenanceID == item.maintenanceID %}
+                        {{ item.name }}
+                    {% endif %}
+                  {% endfor %}
+              </td>
 	            <td>{{ file.uploadDate }}</td>
 	            <td>
 	              

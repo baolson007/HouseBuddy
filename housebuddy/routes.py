@@ -182,7 +182,8 @@ def tour():
 @app.route('/myFiles', methods=['GET', 'POST'])
 def my_files():
     files = UserFile.query.filter_by(owner=current_user.id, deleted=0)
-    return render_template('myFiles.html', files = files)
+    items = MaintenanceItem.query.filter_by(owner=current_user.id, deleted=0)
+    return render_template('myFiles.html', files = files, items=items)
 
 
 
@@ -203,6 +204,7 @@ def allowed_file(filename):
 
 @app.route('/uploadFile/', methods=['GET', 'POST'])
 def upload_file():
+    items=MaintenanceItem.query.filter_by(owner=current_user.id)
 
     if request.method == 'POST':
         if 'file' not in request.files:
@@ -216,12 +218,21 @@ def upload_file():
             flash('file ' + filename + ' successfully uploaded', category='success')
             #date = datetime.UtcNow
             file_to_add = UserFile(owner=current_user.id, filename=filename)
+
+            #Get MaintenanceItem ID
+            name = request.form['name']
+            maintenance_item_to_link = MaintenanceItem.query.filter_by(name=name).first()
+            
+            file_to_add.maintenanceID = maintenance_item_to_link.maintenanceID
+
             db.session.add(file_to_add)
             db.session.commit()
-            return redirect(url_for('my_files'))
+
+            return redirect(url_for('my_files', items=items))
         else:
             flash('File does not exist or is an invalid type of file, try again')
-    return render_template('uploadFile.html')
+    
+    return render_template('uploadFile.html', items=items)
 
 
 

@@ -9,7 +9,12 @@ Login Page
 	<form action="" method=post enctype=multipart/form-data>
       <p><input type=file name=file>
          <input type=submit value=Upload>
-    </form>
+		<select name=name>
+			{% for item in items %}
+			<option value="{{ item.name }}">{{ item.name }}</option>
+			{% endfor %}
+		</select>
+	</form>
 {% endblock %}
 	
 <!--	<form action ="{{url_for('upload_file') }}" method="POST" name="file" enctype="multipart/form-data">
@@ -18,3 +23,4 @@ Login Page
 		{{ form.submit(class="btn btn-sm btn-primary") }}
 	
 	</form>-->
+
