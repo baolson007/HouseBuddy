@@ -5,7 +5,7 @@ Edit Item
 {% endblock %}
 
 {% block content%}
-<body class="text-center">
+<body>
 	<div class="container">
 		<form method="POST" class="form-register" style="color:white"> 
 		{{ form.hidden_tag() }}
@@ -13,19 +13,24 @@ Edit Item
 		Edit An Existing Maintenance Item
 		</h1>
 		<br>
-		
+			
+			{{ form.name.label() }}
 			{{ form.name(class="form-control", value=item.name) }}
 			<br>
-			
+			{{ form.description.label() }}
 			{{ form.description(class="form-control", value=item.description) }}
 			<br>
+			{{ form.dueDate.label() }} (YYYY-mm-dd)
+			{{ form.dueDate(class="form-control", value=item.dueDate) }}
+			<br>
+			{{ form.cost.label() }}
 			{% if item.cost != None %}
 				{{ form.cost(class="form-control", value=item.cost|round(2)) }}
 			{% else %}
 				{{ form.cost(class="form-control", value=0) }}
 			{% endif %}
 			<br>
-
+			
 			{{ form.submit(class="btn btn-md btn-block btn-primary") }}
 
 			<br>

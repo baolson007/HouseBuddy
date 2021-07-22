@@ -38,13 +38,19 @@
               <tr>
                 <td>{{ item.name }}</td>
                 <td>{{ item.description }}</td>
-                <td>{{ item.dueDate }}</td>
+                <td>{% if item.dueDate != None %}
+                      {{ item.dueDate }}
+                    {% else %}
+                      <a class="btn btn-sm btn-info" href="{{ url_for('edit_item', item_id=item.maintenanceID)}}">Set Due Date</a>
+                    {% endif %}
+                </td>
 
                 <td> {% if item.cost != None %}
-                        {{ (item.cost)|round(2) }}</td>
+                         <span>&#36;</span>{{ (item.cost)|round(2) }}</td>
                     {% else %}
-                        {{ item.cost}}</td>
+                        <a class="btn btn-sm btn-info" href="{{ url_for('edit_item', item_id=item.maintenanceID)}}">Set Cost</a>
                     {% endif %}
+                </td>
                 <td>
                   <a class="btn btn-outline btn-info" href="{{ url_for('edit_item', item_id=item.maintenanceID) }}">Edit/Delete</a>
                   <a class="btn btn-outline btn-success" href="{{ url_for('mark_complete', item_id=item.maintenanceID) }} ">Mark as Complete</a>

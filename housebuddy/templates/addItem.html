@@ -5,7 +5,7 @@ Add Item
 {% endblock %}
 
 {% block content%}
-<body class="text-center">
+<body>
 	<div class="container">
 		<form method="POST" class="form-register" style="color:white"> 
 		{{ form.hidden_tag() }}
@@ -13,19 +13,25 @@ Add Item
 		Add a New Maintenance Item
 		</h1>
 		<br>
-		
-			{{ form.name(class="form-control", placeholder = "Maintenance Item Name") }}
-			<br>
+		<br>
 			
-			{{ form.description(class="form-control", placeholder = "Description") }}
-			<br>
-			
-			{{ form.dueDate(class="form-control", placeholder = "Due Date (YYYY-mm-dd)") }}
+			{{ form.name.label() }}
+			{{ form.name(class="form-control", placeholder="Name of Maintenance Task") }}
 			<br>
 
-			
-			{{ form.submit(class="btn btn-lg btn-block btn-primary") }}
+			{{ form.description.label() }}
+			{{ form.description(class="form-control", placeholder="Description") }}
+			<br>
 
+			{{ form.dueDate.label() }} (YYYY-mm-dd)
+			{{ form.dueDate(class="form-control", placeholder="Due Date") }}
+			<br>
+
+			{{ form.cost.label() }}
+			{{ form.cost(class="form-control", placeholder = "cost") }}
+			<br>
+			
+			{{ form.submit(class="btn btn-md btn-block btn-primary") }}
 		</form>
 	</div>
 </body>

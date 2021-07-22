@@ -5,15 +5,15 @@
 
 {% block content %}
 <div class="position-relative overflow-hidden p-3 p-md-1 text-center bg-dark" style="color:white">
-  <div class="col-md-5 p-lg-5 mx-auto my-5">
+  <!--<div class="col-md-5 p-lg-5 mx-auto my-5"> -->
     <h1>Welcome To HouseBuddy</h1>
     <p class="lead font-weight-normal">
     See what maintenance is due, and access your maintenance records by logging in below!
     </p>
     
     <a class="btn btn-lg btn-primary" href="{{ url_for('login') }}">Login</a>
-    <a href="{{ url_for('reset_password_request') }}"><h5>I forgot my password</h5> </a>
-    <br>
+    <a href="{{ url_for('reset_password_request') }}"><h6>I forgot my password</h6> </a>
+
     <br>
 
     <h2 class="lead font-weight-normal">
@@ -25,7 +25,8 @@
     <br>
     <h5> Need an account? </h5>
     <a class="btn btn-sm btn-secondary" href="{{ url_for('register') }}">Register</a>
-  </div>
-  <div class="product-device box-shadow d-none d-md-block"></div>
-  <div class="product-device product-device-2 box-shadow d-none d-md-block"></div>
+  <!--</div>
+  <div class="product-device box-shadow d-none d-md-block"></div>-->
+  <!--<div class="product-device product-device-2 box-shadow d-none d-md-block"></div>-->
+</div>
 {% endblock %}
