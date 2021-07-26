@@ -12,18 +12,20 @@ Edit Item
 		<h3 class="h3 mb-3 font-weight-normal">
 		Edit An Existing Maintenance Item
 		</h1>
+		<div>
+		  <a class="btn btn-lg btn-primary" href="{{ url_for('maintenance') }}">Back to Current Maintenance Tasks</a>
+		</div>
 		<br>
 			
 			{{ form.name.label() }}
 			{{ form.name(class="form-control", value=item.name) }}
-			<br>
+			
 			{{ form.description.label() }}
 			{{ form.description(class="form-control", value=item.description) }}
-			<br>
-			{{ form.dueDate.label() }}
 			
+			{{ form.dueDate.label() }}
 			<input placeholder="Select date" type="date" value={{item.dueDate}} name="dueDate" id="dueDate" class="form-control">
-			<br>
+			
 			{{ form.cost.label() }}
 			{% if item.cost != None %}
 				{{ form.cost(class="form-control", value=item.cost|round(2)) }}
@@ -34,9 +36,6 @@ Edit Item
 			
 			{{ form.submit(class="btn btn-md btn-block btn-primary") }}
 
-			<br>
-			<br>
-			<br>
 			<h4 class="h4 mb-3 font-weight-normal">**Danger Area**</h4>
 			{{ form.delete(class="btn btn-md btn-block btn-danger") }} 
 
@@ -44,5 +43,3 @@ Edit Item
 	</div>
 </body>
 {% endblock %}
-
-<!--{{ form.dueDate(class="form-control", value=item.dueDate) }}-->

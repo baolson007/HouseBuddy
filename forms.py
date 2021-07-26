@@ -82,3 +82,7 @@ class CalendarForm(FlaskForm):
 	dueDate = DateField(label='Due Date', format='%Y-%m-%d', validators=[Optional()])
 	completionDate = DateField(label='Completion Date', format='%Y-%m-%d', validators=[Optional()])
 	submit = SubmitField(label='Submit')
+
+class DatePickerForm(FlaskForm):
+	date = DateField(label='date', format='%Y-%m-%d', validators=[DataRequired()])
+	submit = SubmitField(label='Submit')

@@ -5,13 +5,11 @@
 
 {% block content %}
 <form>
-    <h1>Date Picker</h1>
+    <h1>Select a {{ dateTitle }} for your Maintenance Task:</h1>
+    <h1> {{ maintenanceTaskName }}
   <div id="date-picker" class="md-form md-outline input-with-post-icon datepicker" inline="true">
     <input placeholder="Select date" type="date" id="dueDate" class="form-control">
-    <label for="example">Due Date</label>
-
-    <input placeholder="Select date" type="date" id="completionDate" class="form-control">
-    <label for="example">Completion Date</label>
+    <label for="example">{{ dateTitle }} </label>
 
     <i class="fas fa-calendar input-prefix"></i>
     <p>
@@ -19,10 +17,3 @@
   </div>
 </form>
 {% endblock %}
-
-<!--    <form action="" method='POST' name="myForm">
-      {{ form.csrf_token }}
-      {{ form.dueDate.label }} {{ form.dueDate(class='datepicker') }}{{ form.hidden_tag() }} 
-      {{ form.completionDate.label }} {{ form.completionDate(class="datepicker") }}{{ form.hidden_tag() }} 
-      <p> {{ form.submit }} </p>
-    </form>-->

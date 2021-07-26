@@ -2,7 +2,7 @@ from housebuddy import app, db, mail, bcrypt
 from flask import render_template, redirect, url_for, flash, request, send_file
 from housebuddy.models import MaintenanceItem, User, UserFile
 from housebuddy.forms import (RegisterForm, LoginForm, AddItemForm, EditItemForm,
-                             NewPasswordForm, ResetPasswordForm, CalendarForm)  #,UploadForm
+                             NewPasswordForm, ResetPasswordForm, CalendarForm, DatePickerForm)  #,UploadForm
 #from housebuddy import db, mail
 from flask_login import login_user, logout_user, current_user
 from datetime import datetime, date
@@ -63,20 +63,32 @@ def completed_maintenance():
 
 
 
-@app.route('/markComplete/<int:item_id>', methods=['GET', 'POST'])
-def mark_complete(item_id):
+@app.route('/markComplete', methods=['GET', 'POST'])
+def mark_complete():
+    item_id = request.form['maintenanceID']
     completed_item = MaintenanceItem.query.filter_by(maintenanceID=item_id).first()
     completed_item.completionStatus=1
-    completed_item.completionDate=datetime.now()
+
+    #returns String
+    completionDate = request.form['date'] 
+    #convert to Date
+    if completionDate != '':
+        completionDate = datetime.strptime(completionDate, '%Y-%m-%d')
+    else:
+        completionDate = None
+    completed_item.completionDate=completionDate
     db.session.commit()
-    flash('Task marked as complete, added to Completed Tasks', category="success")
+    flash('\"' + completed_item.name +'\" marked as complete, added to Completed Tasks', category="success")
     return redirect(url_for('completed_maintenance'))
+
+
 
 @app.route('/markIncomplete', methods=['GET','POST'])
 def mark_incomplete():
     id = request.form['maintenanceID']
     
     reverted_item = MaintenanceItem.query.filter_by(maintenanceID=id).first()
+
     reverted_item.completionStatus=0
     reverted_item.completionDate=None
     db.session.commit()
@@ -143,9 +155,6 @@ def edit_item(item_id):
             flash(f'Error on Submit:could not edit item: {msg}', category='danger')
     return render_template('editItem.html', form=form, item=item_to_edit)
     
-#@app.route('/delete/<item_id>', methods=['GET','POST'])
-#def delete_item(item_id):
-
 
 
 @app.route('/register', methods=['GET', 'POST'])
