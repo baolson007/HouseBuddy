@@ -20,8 +20,9 @@ Edit Item
 			{{ form.description.label() }}
 			{{ form.description(class="form-control", value=item.description) }}
 			<br>
-			{{ form.dueDate.label() }} (YYYY-mm-dd)
-			{{ form.dueDate(class="form-control", value=item.dueDate) }}
+			{{ form.dueDate.label() }}
+			
+			<input placeholder="Select date" type="date" value={{item.dueDate}} name="dueDate" id="dueDate" class="form-control">
 			<br>
 			{{ form.cost.label() }}
 			{% if item.cost != None %}
@@ -43,3 +44,5 @@ Edit Item
 	</div>
 </body>
 {% endblock %}
+
+<!--{{ form.dueDate(class="form-control", value=item.dueDate) }}-->
