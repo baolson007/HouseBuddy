@@ -2,7 +2,7 @@ from housebuddy import app, db, mail, bcrypt
 from flask import render_template, redirect, url_for, flash, request, send_file
 from housebuddy.models import MaintenanceItem, User, UserFile
 from housebuddy.forms import (RegisterForm, LoginForm, AddItemForm, EditItemForm,
-                             NewPasswordForm, ResetPasswordForm)  #,UploadForm
+                             NewPasswordForm, ResetPasswordForm, CalendarForm)  #,UploadForm
 #from housebuddy import db, mail
 from flask_login import login_user, logout_user, current_user
 from datetime import datetime, date
@@ -23,7 +23,19 @@ def home_page():
 
 @app.route('/calendar', methods=['GET', 'POST'])
 def calendar():
+    #dueDate = request.form['dueDate']
+    #completionDate = request.form['completionDate']
+
     return render_template('calendar.html')
+
+@app.route('/datePicker', methods=['GET', 'POST'])
+def date_picker():
+    form = CalendarForm()
+    if form.validate_on_submit():
+        request.form['dueDate'] # = form.dueDate.data
+        request.form['completionDate'] # = form.completionDate.data
+        return redirect(url_for('calendar'))
+    return render_template('datePicker.html', form=form)
 
 
 
@@ -66,6 +78,7 @@ def mark_incomplete():
     
     reverted_item = MaintenanceItem.query.filter_by(maintenanceID=id).first()
     reverted_item.completionStatus=0
+    reverted_item.completionDate=None
     db.session.commit()
 
     flash("\"" + reverted_item.name + "\"" + 
@@ -112,13 +125,19 @@ def edit_item(item_id):
     if form.validate_on_submit():
         item_to_edit.name = form.name.data
         item_to_edit.description = form.description.data
-        item_to_edit.dueDate =form.dueDate.data
+
+        #returns String
+        dueDate = request.form.get('dueDate') 
+        #convert to Date
+        dueDate = datetime.strptime(dueDate, '%Y-%m-%d')
+
+        #write to db
+        item_to_edit.dueDate=dueDate
         item_to_edit.cost = form.cost.data
+
         db.session.commit()
         
         return redirect(url_for('maintenance'))
-        #render_template('maintenance.html', items=MaintenanceItem.query.filter_by(owner=current_user.id))
-
     if form.errors != {}:
         for msg in form.errors.values():
             flash(f'Error on Submit:could not edit item: {msg}', category='danger')

@@ -77,3 +77,8 @@ class NewPasswordForm(FlaskForm):
 	password = PasswordField(label='Password:', validators=[Length(min=6), DataRequired()])
 	password_confirm = PasswordField(label='Confirm Password:', validators=[EqualTo('password'), DataRequired()])
 	submit = SubmitField(label='Reset Password')
+
+class CalendarForm(FlaskForm):
+	dueDate = DateField(label='Due Date', format='%Y-%m-%d', validators=[Optional()])
+	completionDate = DateField(label='Completion Date', format='%Y-%m-%d', validators=[Optional()])
+	submit = SubmitField(label='Submit')
