@@ -40,15 +40,11 @@ class AddItemForm(FlaskForm):
 class EditItemForm(FlaskForm):
 	name = StringField(label='Maintenance Item Name')
 	description = StringField(label='Description')
-	dueDate=DateField(label='Due Date')
+	dueDate=DateField(label='Due Date', validators=[Optional()])
 	cost = DecimalField(label='Cost', validators=[Optional()])
 	submit = SubmitField(label='Submit Updated Item')
 	delete = SubmitField(label='Delete Item')
-	#completed = SubmitField(label='Maintenance Completed')
-    #completionStatus = db.Column(db.Integer(), default=0, unique=False)
-    #completionDate = db.Column(db.DateTime, nullable =True, default=datetime.fromisoformat('1900-01-01'))
-    #owner = 
-    #cost = db.Column(db.Numeric(), nullable=True)
+
 
 class ItemDetailForm(FlaskForm):
 	name = StringField(label='Maintenance Item Name')

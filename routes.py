@@ -32,8 +32,8 @@ def calendar():
 def date_picker():
     form = CalendarForm()
     if form.validate_on_submit():
-        request.form['dueDate'] # = form.dueDate.data
-        request.form['completionDate'] # = form.completionDate.data
+        request.form['dueDate']
+        request.form['completionDate']
         return redirect(url_for('calendar'))
     return render_template('datePicker.html', form=form)
 
@@ -69,13 +69,8 @@ def mark_complete():
     completed_item = MaintenanceItem.query.filter_by(maintenanceID=item_id).first()
     completed_item.completionStatus=1
 
-    #returns String
-    completionDate = request.form['date'] 
-    #convert to Date
-    if completionDate != '':
-        completionDate = datetime.strptime(completionDate, '%Y-%m-%d')
-    else:
-        completionDate = None
+    completionDate = convert_date(request.form['date'])
+
     completed_item.completionDate=completionDate
     db.session.commit()
     flash('\"' + completed_item.name +'\" marked as complete, added to Completed Tasks', category="success")
@@ -96,6 +91,34 @@ def mark_incomplete():
     flash("\"" + reverted_item.name + "\"" + 
         " removed from COMPLETED to \'My Maintenance Tasks\'", category="danger")
     return redirect(url_for('maintenance'))
+
+
+def convert_date(date_to_set):
+    if date_to_set != '':
+        date_to_set = datetime.strptime(date_to_set, '%Y-%m-%d')
+    else:
+        date_to_set = None
+    return date_to_set
+
+@app.route('/setDueDate', methods=['GET', 'POST'])
+def set_due_date():
+    id = request.form['maintenanceID']
+    item = MaintenanceItem.query.filter_by(maintenanceID=id).first()
+
+    dueDate = convert_date(request.form['date'])
+
+    item.dueDate = dueDate
+
+    db.session.commit()
+
+    return redirect(url_for('maintenance'))
+
+@app.route('/itemDetail', methods=['GET','POST'])
+def item_detail():
+    id = request.form.get('maintenanceID')
+    item = MaintenanceItem.query.filter_by(maintenanceID=id).first()
+
+    return render_template('itemDetail.html', item=item)
 
 
 @app.route('/addItem',  methods=['GET', 'POST'])
@@ -141,7 +164,7 @@ def edit_item(item_id):
         #returns String
         dueDate = request.form.get('dueDate') 
         #convert to Date
-        dueDate = datetime.strptime(dueDate, '%Y-%m-%d')
+        dueDate = convert_date(dueDate)
 
         #write to db
         item_to_edit.dueDate=dueDate
