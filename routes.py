@@ -119,6 +119,18 @@ def item_detail():
     item = MaintenanceItem.query.filter_by(maintenanceID=id).first()
     files = UserFile.query.filter_by(owner=current_user.id, maintenanceID=id)
 
+    new_notes=request.form.get('notes')
+
+    if new_notes == None:
+        new_notes = ''
+    else:
+        item.notes = new_notes.strip()
+        
+    db.session.commit()
+
+    if UserFile.query.filter_by(owner=current_user.id, maintenanceID=id).count()==0:
+        return render_template('itemDetail.html', item=item)
+
     return render_template('itemDetail.html', item=item, files=files)
 
 
@@ -303,6 +315,7 @@ def download_file(filename):
     return send_file(file_path, as_attachment=True, attachment_filename='')
 
 
+######## make asynchronous in future update ########
 def send_reset_email(user):
     token = user.get_reset_token()
     msg = Message('Password Reset Request', 

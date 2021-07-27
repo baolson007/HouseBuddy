@@ -68,6 +68,7 @@ class MaintenanceItem(db.Model):
     owner = db.Column(db.Integer(), db.ForeignKey('user.id'))
     cost = db.Column(db.Numeric(), nullable=True)
     deleted = db.Column(db.Integer(), nullable=True, default=0)
+    notes = db.Column(db.String(length=2048), nullable=True, unique=False)
 
     def __repr__(self):
         return f'Maintenance: {self.name}'
