@@ -25,7 +25,7 @@
               <th scope="col">Maintenance Item</th>
               <th scope="col">Description</th>
               <th scope="col">Due Date</th>
-              <th scope="col">Completion Date (currently utcnow)</th>
+              <th scope="col">Completion Date</th>
               <th scope="col">Cost</th>
               <th scope="col">Options</th>
             </tr>
@@ -35,7 +35,12 @@
             
            <!--  ROWs-->
               <tr>
-                <td>{{ item.name }}</td>
+                <td>
+                  <form action="{{ url_for('item_detail') }}" method="POST" id="itemDetail">
+                    <input type="hidden" id=maintenanceID name=maintenanceID value={{ item.maintenanceID }}>
+                    <input type="submit" value="{{item.name}}">
+                  </form>
+                </td>
                 <td>{{ item.description }}</td>
                 <td>{{ item.dueDate }}</td>
                 <td>{{ item.completionDate }} </td>

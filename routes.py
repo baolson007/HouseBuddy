@@ -38,16 +38,16 @@ def date_picker():
     return render_template('datePicker.html', form=form)
 
 
-
 @app.route('/maintenance', methods=['GET','POST'])
 def maintenance():
     if current_user.is_authenticated:
         items = MaintenanceItem.query.filter_by(owner=current_user.id, deleted=0, completionStatus=0)
+        items = sorted(items, key=lambda x: x.dueDate or date(1900, 1, 1), reverse=True)
         item_cost_sum = decimal.Decimal(0.00)
         for item in items:
             if item.cost != None:
                 item_cost_sum += decimal.Decimal(round(item.cost,2))
-        return render_template('maintenance.html', items=items, item_cost_sum=round(item_cost_sum, 2))#float(item_cost_sum));
+        return render_template('maintenance.html', items=items, item_cost_sum=round(item_cost_sum, 2))
     else:
         flash(f'No items retrieved. Add items, or contact admin', category='info')
         return render_template('maintenance.html', items=none)
@@ -117,8 +117,9 @@ def set_due_date():
 def item_detail():
     id = request.form.get('maintenanceID')
     item = MaintenanceItem.query.filter_by(maintenanceID=id).first()
+    files = UserFile.query.filter_by(owner=current_user.id, maintenanceID=id)
 
-    return render_template('itemDetail.html', item=item)
+    return render_template('itemDetail.html', item=item, files=files)
 
 
 @app.route('/addItem',  methods=['GET', 'POST'])
@@ -127,12 +128,17 @@ def add_item():
     if form.validate_on_submit():
         new_maintenance_item = MaintenanceItem(name=form.name.data,
                                 description=form.description.data, 
-                                dueDate=form.dueDate.data,
                                 owner=current_user.id)
+        dueDate = convert_date(request.form['dueDate'])
+
+        new_maintenance_item.dueDate = dueDate
+
         db.session.add(new_maintenance_item)
         db.session.commit()
         flash(f'Item successfully added', category='success')
-        return render_template('maintenance.html', items=MaintenanceItem.query.filter_by(owner=current_user.id, deleted=0))
+        items=MaintenanceItem.query.filter_by(owner=current_user.id, deleted=0)
+        items = sorted(items, key=lambda x: x.dueDate or date(1900, 1, 1), reverse=True)
+        return render_template('maintenance.html', items=items)
     if form.errors != {}:
         for msg in form.errors.values():
             flash(f'Error in registration: {msg}', category='danger')
@@ -154,7 +160,7 @@ def edit_item(item_id):
     if form.delete.data == 1:
         item_to_edit.deleted = 1
         db.session.commit()
-        flash('item deleted', category='danger')
+        flash(' \'' + item_to_edit.name + '\' deleted', category='danger')
         return redirect(url_for('maintenance'))
 
     if form.validate_on_submit():
@@ -233,7 +239,10 @@ def tour():
 @app.route('/myFiles', methods=['GET', 'POST'])
 def my_files():
     files = UserFile.query.filter_by(owner=current_user.id, deleted=0)
+    
     items = MaintenanceItem.query.filter_by(owner=current_user.id, deleted=0)
+    items = sorted(items, key=lambda x: x.dueDate or date(1900, 1, 1), reverse=True)
+
     return render_template('myFiles.html', files = files, items=items)
 
 
@@ -241,9 +250,10 @@ def my_files():
 @app.route('/deleteFile/<int:file_id>', methods=['GET','POST'])
 def delete_file(file_id):
     file_to_delete = UserFile.query.filter_by(id=int(file_id)).first()
+    filename = file_to_delete.filename
     db.session.delete(file_to_delete)
     db.session.commit()
-    flash('file deleted', category='success')
+    flash(filename+ ' deleted', category='success')
 
     files = UserFile.query.filter_by(owner=current_user.id)
     return render_template('myFiles.html', files=files)

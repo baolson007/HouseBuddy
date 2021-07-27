@@ -12,5 +12,35 @@ Details
 	<p>{{ item.dueDate  }}</p>
 	<p>{{ item.completionDate }}</p>
 	
+
+	<table>
+      <table class="table table-hover table-dark">
+        <thead>
+          <tr>
+           <!-- COLUMNS -->
+            <th scope="col">File Name</th>
+            <th scope="col">Upload Date</th>
+            <th scope="col">Options</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for file in files %}
+          
+         <!--  ROWs-->
+	          <tr>
+	            <td><a href="/downloadFile/{{ file.filename }}">{{file.filename}}</a></td>
+	            <td>{{ file.uploadDate }}</td>
+	            <td>
+	              
+                <a class="btn btn-default btn-success" a href="/downloadFile/{{file.filename}}" target="blank">Download</a>
+                <a class="btn btn-outline btn-danger" href="{{ url_for('delete_file', file_id=file.id) }}">Delete</a>
+	            </td>
+	          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% if files is not defined %}
+      	<h2>No records uploaded for '{{ item.name }}'<h2></h2>
+      {% endif %}
 </body>
 {% endblock %}

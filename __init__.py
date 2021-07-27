@@ -7,6 +7,7 @@ from flask_mail import Mail
 import os
 from dotenv import load_dotenv
 
+
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///housebuddy.db'
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
