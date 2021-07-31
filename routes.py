@@ -13,6 +13,17 @@ from flask_mail import Message
 
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'doc', 'docx', 'odt', 'xlsx' }
 
+events = [
+    {
+        'todo': 'clean gutters',
+        'date': '2021-07-31'
+    },
+    {
+        'todo': 'Take out trash',
+        'date': '2021-08-11'
+    }
+
+]
 @app.route('/')
 @app.route('/home')
 def home_page():
@@ -26,7 +37,7 @@ def calendar():
     #dueDate = request.form['dueDate']
     #completionDate = request.form['completionDate']
 
-    return render_template('calendar.html')
+    return render_template('calendar.html', events=events)
 
 @app.route('/datePicker', methods=['GET', 'POST'])
 def date_picker():
