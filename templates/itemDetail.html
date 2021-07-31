@@ -26,16 +26,25 @@ Details
     <textarea id="notes" name="notes" rows="6" cols="75">{{ item.notes }}  
     </textarea>
     <br><br>
-    <input class="btn btn-block btn-info" type="submit" value="Update Notes">
+    <input class="btn btn-info" type="submit" value="Update Notes">
     <br><br>
   </form>
 
   
   {% if files is not defined %}
-    <h2>No records uploaded for '{{ item.name }}'</h2>
-    <p>No files uploaded for this item yet</p>
+    <h2>No records uploaded for '{{ item.name }}'
+      <span class='float-right'>
+        <a class="btn btn-info" href="{{ url_for('upload_file') }}"> Upload a record</a>
+      </span>
+    </h2> 
+
   {% else %}
-    <h2>Records associated with '{{item.name}}'</h2>
+
+    <h2>Records associated with '{{item.name}}'
+      <span class='float-right'>
+        <a class="btn btn-info" href="{{ url_for('upload_file') }}"> Upload another record</a>
+      </span>
+    </h2>
 
       <table class="table table-hover table-dark">
         <thead>

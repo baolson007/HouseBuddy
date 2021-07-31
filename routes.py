@@ -277,7 +277,7 @@ def allowed_file(filename):
 
 @app.route('/uploadFile/', methods=['GET', 'POST'])
 def upload_file():
-    items=MaintenanceItem.query.filter_by(owner=current_user.id)
+    items=MaintenanceItem.query.filter_by(owner=current_user.id, deleted=0)
 
     if request.method == 'POST':
         if 'file' not in request.files:
@@ -285,13 +285,23 @@ def upload_file():
             return redirect(request.url)
         file = request.files['file']
 
+
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
+
+            exists =bool(db.session.query(UserFile).filter_by(owner=current_user.id, filename=filename).first())
+            
+            if exists:
+                flash('filename ' +'\"' + filename + '\" already exists. Choose another file, or rename your file before uploading',
+                 category='danger')
+                return render_template('uploadFile.html', items=items)
+
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             flash('file ' + filename + ' successfully uploaded', category='success')
             #date = datetime.UtcNow
             file_to_add = UserFile(owner=current_user.id, filename=filename)
 
+  
             #Get MaintenanceItem ID
             name = request.form['name']
             maintenance_item_to_link = MaintenanceItem.query.filter_by(name=name).first()
