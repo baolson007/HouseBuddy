@@ -1,28 +1,31 @@
+{% extends "base.html" %}
 <!DOCTYPE html>
 <html>
-<head>
+{% block head %}
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.9.0/main.min.css">
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.9.0/main.min.js"></script>
 
-  <meta charset="utf-8">
-  <title>Calendar</title>
+{% endblock %}
+
+{% block title %}
+  My Calendar
+{% endblock %}
 </head>
-<body>
-  <h1>CALENDAR</h1>
-    <div id="calendar"></div>
+
+{% block content %}
+  <div id="calendar"></div>
     <script>
       let calendarElement = document.getElementById('calendar');
       let calendar = new FullCalendar.Calendar(calendarElement, {
         events : [
         {% for event in events %}
           {
-            title : '{{event.todo}}',
-            start : '{{event.date}}',
+            title : '{{ event.todo }}',
+            start : '{{ event.date }}',
           },
         {% endfor %}
         ]
       });
       calendar.render()
     </script>
-</body>
-</html>
+{% endblock %}

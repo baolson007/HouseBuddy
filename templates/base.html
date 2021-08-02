@@ -4,10 +4,11 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
+    
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
+    {% block head %}<!-- for customizing contents of head block -->
+    {% endblock %}
     <title>
       {% block title %}
 
@@ -26,7 +27,7 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="{{ url_for('home_page') }}">Home <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="{{ url_for('home_page') }}">Home <span class="sr-only"></span></a>
             </li>
         </ul>
 
@@ -37,7 +38,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
               <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
-                  <a class="nav-link">Welcome, {{ current_user.username }}</a>
+                  <a class="nav-link" href="{{ url_for('profile') }}">Welcome, {{ current_user.username }}</a>
                 </li>
               </ul>            
            <div class="collapse navbar-collapse" id="navbarNav">

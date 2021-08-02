@@ -2,7 +2,8 @@ from housebuddy import app, db, mail, bcrypt
 from flask import render_template, redirect, url_for, flash, request, send_file
 from housebuddy.models import MaintenanceItem, User, UserFile
 from housebuddy.forms import (RegisterForm, LoginForm, AddItemForm, EditItemForm,
-                             NewPasswordForm, ResetPasswordForm, CalendarForm, DatePickerForm)  #,UploadForm
+                             NewPasswordForm, ResetPasswordForm, CalendarForm, DatePickerForm,
+                             UserProfileForm)  #,UploadForm
 #from housebuddy import db, mail
 from flask_login import login_user, logout_user, current_user
 from datetime import datetime, date
@@ -13,17 +14,7 @@ from flask_mail import Message
 
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'doc', 'docx', 'odt', 'xlsx' }
 
-events = [
-    {
-        'todo': 'clean gutters',
-        'date': '2021-07-31'
-    },
-    {
-        'todo': 'Take out trash',
-        'date': '2021-08-11'
-    }
 
-]
 @app.route('/')
 @app.route('/home')
 def home_page():
@@ -32,11 +23,19 @@ def home_page():
     else:
         return render_template('home.html')
 
+@app.route('/profile', methods=['GET','POST'])
+def profile():
+    form=UserProfileForm()
+    user=User.query.filter_by(id=current_user.id).first()
+
+    return render_template('profile.html', form=form, user=user)
+
 @app.route('/calendar', methods=['GET', 'POST'])
 def calendar():
-    #dueDate = request.form['dueDate']
-    #completionDate = request.form['completionDate']
-
+    items = MaintenanceItem.query.filter_by(owner=current_user.id, deleted=0, completionStatus=0)
+    events = []
+    for item in items:
+        events.append({'todo':item.name, 'date':item.dueDate})
     return render_template('calendar.html', events=events)
 
 @app.route('/datePicker', methods=['GET', 'POST'])

@@ -82,3 +82,10 @@ class CalendarForm(FlaskForm):
 class DatePickerForm(FlaskForm):
 	date = DateField(label='date', format='%Y-%m-%d', validators=[DataRequired()])
 	submit = SubmitField(label='Submit')
+
+class UserProfileForm(FlaskForm):
+	username = StringField(label='Username', validators=[])
+	email = StringField(label='Email', validators=[Email()]) 
+	first_name = StringField(label='First Name', validators=[Optional()])
+	last_name = StringField(label='Last Name', validators=[Optional()])
+	submit = SubmitField(label='Submit')
