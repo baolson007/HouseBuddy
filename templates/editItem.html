@@ -11,7 +11,7 @@ Edit Item
 		{{ form.hidden_tag() }}
 		<h3 class="h3 mb-3 font-weight-normal">
 		Edit An Existing Maintenance Item
-		</h1>
+		</h3>
 		<div>
 		  <a class="btn btn-lg btn-primary" href="{{ url_for('maintenance') }}">Back to Current Maintenance Tasks</a>
 		</div>
@@ -33,8 +33,11 @@ Edit Item
 				{{ form.cost(class="form-control", value=0) }}
 			{% endif %}
 			<br>
+
+			<div class="mb-3">
 			
 			{{ form.submit(class="btn btn-md btn-block btn-primary") }}
+			</div>
 
 			<h4 class="h4 mb-3 font-weight-normal">**Danger Area**</h4>
 			{{ form.delete(class="btn btn-md btn-block btn-danger") }} 

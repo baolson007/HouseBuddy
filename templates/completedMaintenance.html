@@ -50,11 +50,19 @@
                         {{ item.cost}}</td>
                     {% endif %}
                 <td>
+                 <!-- <form action="{{ url_for('edit_item', item_id=item.maintenanceID) }}" method="POST">
+
+                    <input class="btn btn-outline btn-info" type="submit" value="Edit/Delete">
+              
+ 
+                  </form>-->
                   <a class="btn btn-outline btn-info" href="{{ url_for('edit_item', item_id=item.maintenanceID) }}">Edit/Delete</a>
-                  <form action="{{ url_for('mark_incomplete') }}" method="POST">
-                    <input type="hidden" id=maintenanceID name=maintenanceID value={{ item.maintenanceID }}>
-                    <input class="btn btn-outline btn-danger" type="submit" value="Revert Completion Status">
-                  </form>
+                  <div class="mt-2">
+                    <form action="{{ url_for('mark_incomplete') }}" method="POST">
+                      <input type="hidden" id=maintenanceID name=maintenanceID value={{ item.maintenanceID }}>
+                      <input class="btn btn-outline btn-danger" type="submit" value="Revert Completion Status">
+                    </form>
+                </div>
                 </td>
               </tr>
             {% endfor %}

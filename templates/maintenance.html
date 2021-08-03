@@ -37,7 +37,7 @@
            <!--  ROWs-->
               <tr>
                 <td>
-                  <form action="{{ url_for('item_detail') }}" method="POST" id="itemDetail">
+                  <form action="{{ url_for('item_detail') }}" method="GET" id="itemDetail">
                     <input type="hidden" id=maintenanceID name=maintenanceID value={{ item.maintenanceID }}>
                     <input type="submit" value="{{item.name}}">
                   </form>
@@ -52,7 +52,7 @@
                         <div id="date-picker" class="md-form md-outline input-with-post-icon datepicker form-inline" inline="true">
                           <input placeholder="Select date" type="date" name=date id=date class="form-control">
                           <i class="fas fa-calendar input-prefix"></i>
-                          <input class="btn btn-sm btn-info" type="submit" value="Set Due Date">
+                          <input class="btn btn-sm btn-info ml-1" type="submit" value="Set Due Date">
                         </div>
                     {% endif %}
                 </td>
@@ -65,15 +65,17 @@
                 </td>
                 <td>
                   <a class="btn btn-outline btn-info" href="{{ url_for('edit_item', item_id=item.maintenanceID) }}">Edit/Delete</a>
-                  <form action="{{ url_for('mark_complete') }}" method="POST" id="markComplete">
-                    <input type="hidden" id=maintenanceID name=maintenanceID value={{ item.maintenanceID }}>
-                    
-                      <div id="date-picker" class="md-form md-outline input-with-post-icon datepicker form-inline" inline="true">
-                      <input placeholder="Select date" type="date" name=date id=date class="form-control">
-                      <i class="fas fa-calendar input-prefix"></i>
-                      <input class="btn btn-outline btn-success" type="submit" value="Mark Complete">
-                    </div>
-                  </form>
+                  <div class="mt-2">
+                    <form action="{{ url_for('mark_complete') }}" method="POST" id="markComplete">
+                      <input type="hidden" id=maintenanceID name=maintenanceID value={{ item.maintenanceID }}>
+                      
+                      <div id="date-picker" class="md-form md-outline input-with-post-icon datepicker form-inline mr-1" inline="true" >
+                        <input placeholder="Select date" type="date" name=date id=date class="form-control">
+                        <i class="fas fa-calendar input-prefix"></i>
+                        <input class="btn btn-outline btn-success ml-1" type="submit" value="Mark Complete">
+                      </div>
+                    </form>
+                  </div>
                 </td>
               </tr>
             {% endfor %}

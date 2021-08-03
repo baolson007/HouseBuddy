@@ -58,9 +58,9 @@ def maintenance():
             if item.cost != None:
                 item_cost_sum += decimal.Decimal(round(item.cost,2))
         return render_template('maintenance.html', items=items, item_cost_sum=round(item_cost_sum, 2))
-    else:
+    else: #not necessary logic
         flash(f'No items retrieved. Add items, or contact admin', category='info')
-        return render_template('maintenance.html', items=none)
+        return render_template('maintenance.html', items=None)
 
 @app.route('/completedMaintenance', methods=['GET', 'POST'])
 def completed_maintenance():
@@ -75,7 +75,7 @@ def completed_maintenance():
 
 @app.route('/markComplete', methods=['GET', 'POST'])
 def mark_complete():
-    item_id = request.form['maintenanceID']
+    item_id = request.form.get('maintenanceID')
     completed_item = MaintenanceItem.query.filter_by(maintenanceID=item_id).first()
     completed_item.completionStatus=1
 
@@ -90,7 +90,7 @@ def mark_complete():
 
 @app.route('/markIncomplete', methods=['GET','POST'])
 def mark_incomplete():
-    id = request.form['maintenanceID']
+    id = request.form.get('maintenanceID')
     
     reverted_item = MaintenanceItem.query.filter_by(maintenanceID=id).first()
 
@@ -112,7 +112,11 @@ def convert_date(date_to_set):
 
 @app.route('/setDueDate', methods=['GET', 'POST'])
 def set_due_date():
-    id = request.form['maintenanceID']
+    if request.method == 'POST':
+        id = request.form.get('maintenanceID')
+    else:
+        id = request.args.get('maintenanceID')
+    #flash(id)
     item = MaintenanceItem.query.filter_by(maintenanceID=id).first()
 
     dueDate = convert_date(request.form['date'])
@@ -125,11 +129,15 @@ def set_due_date():
 
 @app.route('/itemDetail', methods=['GET','POST'])
 def item_detail():
-    id = request.form.get('maintenanceID')
+    if request.method == 'POST':
+        id = request.form.get('maintenanceID')
+    else:
+        id = request.args.get('maintenanceID')
+    #flash(id)
     item = MaintenanceItem.query.filter_by(maintenanceID=id).first()
     files = UserFile.query.filter_by(owner=current_user.id, maintenanceID=id)
 
-    new_notes=request.form.get('notes')
+    new_notes=request.args.get('notes')#form.get('notes')
 
     if new_notes == None:
         new_notes = ''
@@ -314,7 +322,7 @@ def upload_file():
   
             #Get MaintenanceItem ID
             name = request.form['name']
-            maintenance_item_to_link = MaintenanceItem.query.filter_by(name=name).first()
+            maintenance_item_to_link = MaintenanceItem.query.filter_by(name=name, deleted=0).first()
             
             file_to_add.maintenanceID = maintenance_item_to_link.maintenanceID
 
