@@ -159,7 +159,8 @@ def add_item():
     if form.validate_on_submit():
         new_maintenance_item = MaintenanceItem(name=form.name.data,
                                 description=form.description.data,
-                                owner=current_user.id)
+                                owner=current_user.id,
+                                cost=form.cost.data)
         dueDate = convert_date(request.form['dueDate'])
 
         new_maintenance_item.dueDate = dueDate
