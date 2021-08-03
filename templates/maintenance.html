@@ -47,7 +47,7 @@
           <td >
               {{ item.description }}
           </td>
-          <td class="{{ 'red' if item.dueDate < item.dueDate.today() }}">
+          <td class="{{ 'red' if item.dueDate is not none and item.dueDate < item.dueDate.today() }}">
             <style>
                   .red {
                       color: red;
