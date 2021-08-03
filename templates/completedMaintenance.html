@@ -38,12 +38,23 @@
                 <td>
                   <form action="{{ url_for('item_detail') }}" method="POST" id="itemDetail">
                     <input type="hidden" id=maintenanceID name=maintenanceID value={{ item.maintenanceID }}>
-                    <input type="submit" value="{{item.name}}">
+                    <input type="submit" class="btn btn-sm btn-info" value="{{item.name}}">
                   </form>
                 </td>
                 <td>{{ item.description }}</td>
-                <td>{{ item.dueDate }}</td>
-                <td>{{ item.completionDate }} </td>
+                <td>{% if item.dueDate != None %}
+                      {{ item.dueDate.strftime('%m-%d-%Y') }}
+                    {% else %}
+                      {{ item.dueDate }}
+                    {% endif %}
+                </td>
+                <td>{% if item.completionDate != None %}
+                      {{ item.completionDate.strftime('%m-%d-%Y') }}
+                    {% else %}
+                      {{ item.completionDate }}
+                    {% endif %}
+                </td>
+                      
                 <td> {% if item.cost != None %}
                         {{ (item.cost)|round(2) }}</td>
                     {% else %}

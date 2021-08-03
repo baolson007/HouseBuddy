@@ -44,7 +44,7 @@
           </td>
           <td>{{ item.description }}</td>
           <td>{% if item.dueDate != None %}
-                {{ item.dueDate }}
+                {{ item.dueDate.strftime('%m-%d-%Y') }}
               {% else %}
                 <form action="{{ url_for('set_due_date') }}" method="POST" id="setDueDate">
                   <input type="hidden" id=maintenanceID name=maintenanceID value={{ item.maintenanceID }}>
