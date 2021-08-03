@@ -71,10 +71,10 @@
               <form action="{{ url_for('mark_complete') }}" method="POST" id="markComplete">
                 <input type="hidden" id=maintenanceID name=maintenanceID value={{ item.maintenanceID }}>
                 
-                <div id="date-picker" class="md-form md-outline input-with-post-icon datepicker form-inline " inline="true" >
+                <div id="date-picker" class="md-form md-outline input-with-post-icon datepicker form-inline mt-1" inline="true" >
                   <input placeholder="Select date" type="date" name=date id=date class="form-control">
                   <i class="fas fa-calendar input-prefix"></i>
-                  <input class="btn btn-outline btn-success ml-1" type="submit" value="Mark Complete">
+                  <input class="btn btn-outline btn-success ml-1 mt-1" type="submit" value="Mark Complete">
                 </div>
               </form>
             </div>

@@ -5,13 +5,28 @@
 
 {% block content %}
 <div class="position-relative overflow-hidden p-3 p-md-1 text-center bg-dark" style="color:white">
-  <div class="col-md-5 p-lg-5 mx-auto my-5">
+  <div class="col-md-5 p-lg-2 mx-auto my-5">
     <h1>Welcome Back!</h1>
-    <p>Task Overview</p>
-    <h4>Completed Tasks:</h4> {{ complete }}
-    <h4>Pending Tasks:</h4> {{ pending }}
-    <h4>Total Tasks:</h4> {{ total_count }}
+    <h3>Task Overview</h2>
+      <br><br>
 
+
+    <table class="center table-bordered" style="border:1px; margin-left:auto;margin-right:auto;">
+      <thead>
+        <tr>
+          <th style="padding:10px">  Completed  </th>
+          <th style="padding:10px">  Pending  </th>        
+          <th style="padding:10px">  Total Count  </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="padding:5px"> <a href="{{ url_for('completed_maintenance') }}">{{ complete }}</a></td>
+          <td style="padding:5px"> <a href="{{ url_for('maintenance') }}">{{ pending }}</a></td>        
+          <td style="padding:5px">{{ total_count }}</td>
+        </tr>
+      </tbody>
+    </table>
 
 
   <div class="product-device box-shadow d-none d-md-block"></div>
