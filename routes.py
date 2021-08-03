@@ -62,7 +62,7 @@ def calendar():
     items = MaintenanceItem.query.filter_by(owner=current_user.id, deleted=0, completionStatus=0)
     events = []
     for item in items:
-        events.append({'todo':item.name, 'date':item.dueDate})
+        events.append({'todo':item.name, 'date':item.dueDate, 'complete':item.completionStatus})
     return render_template('calendar.html', events=events)
 
 @app.route('/datePicker', methods=['GET', 'POST'])
@@ -98,6 +98,15 @@ def completed_maintenance():
                 item_cost_sum += decimal.Decimal(round(item.cost,2))
     return render_template('completedMaintenance.html', items=items, item_cost_sum=round(item_cost_sum, 2))
 
+@app.route('/pendingMaintenance', methods=['GET', 'POST'])
+def pending_maintenance():
+    items = MaintenanceItem.query.filter_by(owner=current_user.id, deleted=0, completionStatus=0)
+
+    item_cost_sum = decimal.Decimal(0.0)
+    for item in items:
+            if item.cost != None:
+                item_cost_sum += decimal.Decimal(round(item.cost,2))
+    return render_template('pendingMaintenance.html', items=items, item_cost_sum=round(item_cost_sum, 2))
 
 
 @app.route('/markComplete', methods=['GET', 'POST'])
@@ -279,7 +288,7 @@ def login():
             ):
                 login_user(login_attempt_usr)
                 flash(f'Succesfully logged in as {login_attempt_usr.username}', category='success')
-                return redirect(url_for('overview'))
+                return redirect(url_for('home_page'))
         else:
             flash('Username and\\or password do not match. Please try again', category='danger')
     return render_template('login.html', form=form)

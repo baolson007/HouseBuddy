@@ -8,8 +8,7 @@
   <div class="col-md-5 p-lg-2 mx-auto my-5">
     <h1>Welcome Back!</h1>
     <h3>Task Overview</h2>
-      <br><br>
-
+      <br>
 
     <table class="center table-bordered" style="border:1px; margin-left:auto;margin-right:auto;">
       <thead>
@@ -25,7 +24,7 @@
           <td rowspan="3" style="padding:5px">
             <a class="btn btn-block btn-info" href="{{ url_for('completed_maintenance') }}">{{ complete }}</a>
           </td>
-          <td colspan="2" style="padding:5px"> <a class="btn btn-block btn-info"href="{{ url_for('maintenance') }}">{{ pending }}</a></td> 
+          <td colspan="2" style="padding:5px"> <a class="btn btn-block btn-info"href="{{ url_for('pending_maintenance') }}">{{ pending }}</a></td> 
 
           <td rowspan="3" style="padding:5px">{{ total_count }}</td>
         </tr>

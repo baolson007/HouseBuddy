@@ -4,12 +4,14 @@
 {% endblock %}
 
 {% block content %}
+  {% block innerContent %}
   <h1>My Maintenance Tasks</h1>
   <br>
   <div>
     <a class="btn btn-lg btn-primary" href="{{ url_for('add_item') }}">Add Maintenance Task</a>
-    <a class="btn btn-lg btn-primary" href="{{ url_for('completed_maintenance') }}">View Completed Tasks</a>
+    <a class="btn btn-lg btn-success" href="{{ url_for('completed_maintenance') }}">View Completed Tasks</a>
   </div>
+  {% endblock %} 
   <br>
   <a style="color: lawngreen; font-weight: bold; text-align: right;">
     <i class="fas fa-coins"></i>
@@ -18,7 +20,7 @@
     
   <p></p>
 
-    
+   
   <table class="table table-hover table-dark">
     <thead>
       <tr>
@@ -42,10 +44,19 @@
               <input type="submit" class="btn btn-block btn-info" value="{{item.name}}">
             </form>
           </td>
-          <td>{{ item.description }}</td>
-          <td>{% if item.dueDate != None %}
-                {{ item.dueDate.strftime('%m-%d-%Y') }}
-              {% else %}
+          <td >
+              {{ item.description }}
+          </td>
+          <td class="{{ 'red' if item.dueDate < item.dueDate.today() }}">
+            <style>
+                  .red {
+                      color: red;
+                  }
+            </style>
+
+            {% if item.dueDate != None %}
+              {{ item.dueDate.strftime('%m-%d-%Y') }}
+            {% else %}
                 <form action="{{ url_for('set_due_date') }}" method="POST" id="setDueDate">
                   <input type="hidden" id=maintenanceID name=maintenanceID value={{ item.maintenanceID }}>
               

@@ -1,0 +1,10 @@
+{% extends 'maintenance.html' %}
+
+{% block innerContent %}
+  <h1>Pending Maintenance</h1>
+  <br>
+  <div>
+    <a class="btn btn-lg btn-primary" href="{{ url_for('maintenance') }}">Back to Current Maintenance Tasks</a>
+    <a class="btn btn-lg btn-success" href="{{ url_for('completed_maintenance') }}">View Completed Tasks</a>
+  </div>
+ {% endblock %}
