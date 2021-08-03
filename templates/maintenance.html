@@ -39,7 +39,7 @@
           <td>
             <form action="{{ url_for('item_detail') }}" method="GET" id="itemDetail">
               <input type="hidden" id=maintenanceID name=maintenanceID value={{ item.maintenanceID }}>
-              <input type="submit" class="btn btn-sm btn-info" value="{{item.name}}">
+              <input type="submit" class="btn btn-block btn-info" value="{{item.name}}">
             </form>
           </td>
           <td>{{ item.description }}</td>

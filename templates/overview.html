@@ -15,15 +15,27 @@
       <thead>
         <tr>
           <th style="padding:10px">  Completed  </th>
-          <th style="padding:10px">  Pending  </th>        
-          <th style="padding:10px">  Total Count  </th>
+          <th colspan="2" style="padding:10px">  Pending  </th>        
+          <th style="padding:10px">  Total Count </th>
+
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td style="padding:5px"> <a href="{{ url_for('completed_maintenance') }}">{{ complete }}</a></td>
-          <td style="padding:5px"> <a href="{{ url_for('maintenance') }}">{{ pending }}</a></td>        
-          <td style="padding:5px">{{ total_count }}</td>
+          <td rowspan="3" style="padding:5px">
+            <a class="btn btn-block btn-info" href="{{ url_for('completed_maintenance') }}">{{ complete }}</a>
+          </td>
+          <td colspan="2" style="padding:5px"> <a class="btn btn-block btn-info"href="{{ url_for('maintenance') }}">{{ pending }}</a></td> 
+
+          <td rowspan="3" style="padding:5px">{{ total_count }}</td>
+        </tr>
+        
+          <th style="padding:5px">Overdue</th>
+          <th style="padding:5px">No Due Date</th>
+
+        <tr>
+          <td style="padding:5px">{{ overdue }}</td>
+          <td style="padding:5px">{{ none_date }}</td>
         </tr>
       </tbody>
     </table>

@@ -21,6 +21,8 @@ def home_page():
         total_count = 0
         complete = 0
         pending = 0
+        overdue = overdue_items_count()
+        none_date = 0
         for item in items:
             if item.completionStatus == 1:
                 complete+=1
@@ -28,9 +30,25 @@ def home_page():
                 pending+=1
             total_count+=1
 
-        return render_template('overview.html', total_count=total_count, complete=complete, pending=pending)
+            if item.dueDate == None:
+                none_date += 1
+
+        return render_template('overview.html', total_count=total_count, complete=complete, pending=pending, overdue=overdue, none_date=none_date)
     else:
         return render_template('home.html')
+
+def overdue_items_count():
+    items = MaintenanceItem.query.filter_by(owner=current_user.id, deleted=0, completionStatus=0)
+    today = date.today()
+    count = 0
+
+    for item in items:
+        if item.dueDate is None:
+            count += 1
+        elif today > item.dueDate:
+            count += 1
+
+    return count
 
 @app.route('/profile', methods=['GET','POST'])
 def profile():
@@ -261,7 +279,7 @@ def login():
             ):
                 login_user(login_attempt_usr)
                 flash(f'Succesfully logged in as {login_attempt_usr.username}', category='success')
-                return redirect(url_for('maintenance'))
+                return redirect(url_for('overview'))
         else:
             flash('Username and\\or password do not match. Please try again', category='danger')
     return render_template('login.html', form=form)
