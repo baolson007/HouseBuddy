@@ -1,9 +1,7 @@
 from housebuddy import app, db, mail, bcrypt
 from flask import render_template, redirect, url_for, flash, request, send_file
 from housebuddy.models import MaintenanceItem, User, UserFile
-from housebuddy.forms import (RegisterForm, LoginForm, AddItemForm, EditItemForm,
-                             NewPasswordForm, ResetPasswordForm, CalendarForm, DatePickerForm,
-                             UserProfileForm)  #,UploadForm
+from housebuddy.forms import (RegisterForm, LoginForm, AddItemForm, EditItemForm, NewPasswordForm, ResetPasswordForm, CalendarForm, DatePickerForm, UserProfileForm)  #,UploadForm
 #from housebuddy import db, mail
 from flask_login import login_user, logout_user, current_user
 from datetime import datetime, date
@@ -90,15 +88,18 @@ def mark_complete():
 
 @app.route('/markIncomplete', methods=['GET','POST'])
 def mark_incomplete():
-    id = request.form.get('maintenanceID')
-    
+    if request.method == 'POST':
+        id = request.form.get('maintenanceID')
+    else:
+        id = request.args.get('maintenanceID')
+
     reverted_item = MaintenanceItem.query.filter_by(maintenanceID=id).first()
 
     reverted_item.completionStatus=0
     reverted_item.completionDate=None
     db.session.commit()
 
-    flash("\"" + reverted_item.name + "\"" + 
+    flash("\"" + reverted_item.name + "\"" +
         " removed from COMPLETED to \'My Maintenance Tasks\'", category="danger")
     return redirect(url_for('maintenance'))
 
@@ -143,7 +144,7 @@ def item_detail():
         new_notes = ''
     else:
         item.notes = new_notes.strip()
-        
+
     db.session.commit()
 
     if UserFile.query.filter_by(owner=current_user.id, maintenanceID=id).count()==0:
@@ -157,7 +158,7 @@ def add_item():
     form = AddItemForm()
     if form.validate_on_submit():
         new_maintenance_item = MaintenanceItem(name=form.name.data,
-                                description=form.description.data, 
+                                description=form.description.data,
                                 owner=current_user.id)
         dueDate = convert_date(request.form['dueDate'])
 
@@ -181,7 +182,7 @@ def add_item():
 @app.route('/editItem/<int:item_id>', methods=['GET','POST'])
 def edit_item(item_id):
     ##--NOTE--#############################################
-    ##  url_for() sends param as str().                   
+    ##  url_for() sends param as str().
     ##  item_id is the MaintenanceItem id, NOT the User id
     #######################################################
     form = EditItemForm()
@@ -198,7 +199,7 @@ def edit_item(item_id):
         item_to_edit.description = form.description.data
 
         #returns String
-        dueDate = request.form.get('dueDate') 
+        dueDate = request.form.get('dueDate')
         #convert to Date
         dueDate = convert_date(dueDate)
 
@@ -207,13 +208,13 @@ def edit_item(item_id):
         item_to_edit.cost = form.cost.data
 
         db.session.commit()
-        
+
         return redirect(url_for('maintenance'))
     if form.errors != {}:
         for msg in form.errors.values():
             flash(f'Error on Submit:could not edit item: {msg}', category='danger')
     return render_template('editItem.html', form=form, item=item_to_edit)
-    
+
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -269,7 +270,7 @@ def tour():
 @app.route('/myFiles', methods=['GET', 'POST'])
 def my_files():
     files = UserFile.query.filter_by(owner=current_user.id, deleted=0)
-    
+
     items = MaintenanceItem.query.filter_by(owner=current_user.id, deleted=0)
     items = sorted(items, key=lambda x: x.dueDate or date(1900, 1, 1), reverse=True)
 
@@ -308,7 +309,7 @@ def upload_file():
             filename = secure_filename(file.filename)
 
             exists =bool(db.session.query(UserFile).filter_by(owner=current_user.id, filename=filename).first())
-            
+
             if exists:
                 flash('filename ' +'\"' + filename + '\" already exists. Choose another file, or rename your file before uploading',
                  category='danger')
@@ -319,11 +320,11 @@ def upload_file():
             #date = datetime.UtcNow
             file_to_add = UserFile(owner=current_user.id, filename=filename)
 
-  
+
             #Get MaintenanceItem ID
             name = request.form['name']
             maintenance_item_to_link = MaintenanceItem.query.filter_by(name=name, deleted=0).first()
-            
+
             file_to_add.maintenanceID = maintenance_item_to_link.maintenanceID
 
             db.session.add(file_to_add)
@@ -332,7 +333,7 @@ def upload_file():
             return redirect(url_for('my_files'))
         else:
             flash('File does not exist or is an invalid type of file, try again')
-    
+
     return render_template('uploadFile.html', items=items)
 
 
@@ -346,8 +347,8 @@ def download_file(filename):
 ######## make asynchronous in future update ########
 def send_reset_email(user):
     token = user.get_reset_token()
-    msg = Message('Password Reset Request', 
-            sender='HouseBuddyApp@gmail.com', 
+    msg = Message('Password Reset Request',
+            sender='HouseBuddyApp@gmail.com',
             recipients=[user.email])
     msg.body = f''' To reset your password for username- {user.username} , visit :
 {url_for('reset_token', token=token, _external=True)}
