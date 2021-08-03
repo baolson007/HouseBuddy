@@ -170,7 +170,11 @@ def add_item():
         flash(f'Item successfully added', category='success')
         items=MaintenanceItem.query.filter_by(owner=current_user.id, deleted=0)
         items = sorted(items, key=lambda x: x.dueDate or date(1900, 1, 1), reverse=True)
-        return render_template('maintenance.html', items=items)
+        item_cost_sum = decimal.Decimal(0.0)
+        for item in items:
+            if item.cost != None:
+                item_cost_sum += decimal.Decimal(round(item.cost,2))
+        return render_template('maintenance.html', items=items, item_cost_sum=round(item_cost_sum, 2))
     if form.errors != {}:
         for msg in form.errors.values():
             flash(f'Error in registration: {msg}', category='danger')

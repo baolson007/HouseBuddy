@@ -46,7 +46,7 @@
           <td>{% if item.dueDate != None %}
                 {{ item.dueDate }}
               {% else %}
-                <form action="{{ url_for('set_due_date') }}" method="POST" id="markComplete">
+                <form action="{{ url_for('set_due_date') }}" method="POST" id="setDueDate">
                   <input type="hidden" id=maintenanceID name=maintenanceID value={{ item.maintenanceID }}>
               
                   <div id="date-picker" class="md-form md-outline input-with-post-icon datepicker mt-1" inline="true">
