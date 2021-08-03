@@ -7,7 +7,13 @@
 <div class="position-relative overflow-hidden p-3 p-md-1 text-center bg-dark" style="color:white">
   <div class="col-md-5 p-lg-5 mx-auto my-5">
     <h1>Welcome Back!</h1>
-    <p>OVERVIEW PLACEHOLDER</p>
+    <p>Task Overview</p>
+    <h4>Completed Tasks:</h4> {{ complete }}
+    <h4>Pending Tasks:</h4> {{ pending }}
+    <h4>Total Tasks:</h4> {{ total_count }}
+
+
+
   <div class="product-device box-shadow d-none d-md-block"></div>
   <div class="product-device product-device-2 box-shadow d-none d-md-block"></div>
 {% endblock %}

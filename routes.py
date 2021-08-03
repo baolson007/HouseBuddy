@@ -17,7 +17,18 @@ ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'doc', 'docx', 'odt', 
 @app.route('/home')
 def home_page():
     if current_user.is_authenticated:
-        return render_template('overview.html')
+        items = MaintenanceItem.query.filter_by(owner=current_user.id, deleted=0)
+        total_count = 0
+        complete = 0
+        pending = 0
+        for item in items:
+            if item.completionStatus == 1:
+                complete+=1
+            else:
+                pending+=1
+            total_count+=1
+
+        return render_template('overview.html', total_count=total_count, complete=complete, pending=pending)
     else:
         return render_template('home.html')
 
