@@ -1,0 +1,29 @@
+.carousel-caption {
+    position: relative;
+    left: 0;
+    top: 0;
+}
+
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  height: 75px;
+  width: 75px;
+  outline: black;
+  background-size: 100%, 100%;
+  border-radius: 25%;
+  border: 1px solid black;
+  background-image: none;
+}
+.carousel-control-next-icon:after
+{
+  content: '>';
+  font-size: 55px;
+  color: red;
+}
+
+.carousel-control-prev-icon:after {
+  content: '<';
+  font-size: 55px;
+  color: red;
+}
