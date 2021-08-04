@@ -65,7 +65,7 @@
                     <input placeholder="Select date" type="date" name=date id=date class="form-control">
                     <i class="fas fa-calendar input-prefix"></i>
 
-                    <input class="btn btn-sm btn-info ml-1 mt-1" type="submit" value="Set Due Date">
+                    <input class="btn btn-sm btn-info mt-1" type="submit" value="Set Due Date">
                   </div>
               {% endif %}
           </td>
@@ -77,15 +77,15 @@
               {% endif %}
           </td>
           <td>
-            <a class="btn btn-outline btn-info" href="{{ url_for('edit_item', item_id=item.maintenanceID) }}">Edit/Delete</a>
-            <div class="mt-2">
+            <a class="btn btn-outline btn-info ml-1" href="{{ url_for('edit_item', item_id=item.maintenanceID) }}">Edit/Delete</a>
+            <div>
               <form action="{{ url_for('mark_complete') }}" method="POST" id="markComplete">
                 <input type="hidden" id=maintenanceID name=maintenanceID value={{ item.maintenanceID }}>
                 
-                <div id="date-picker" class="md-form md-outline input-with-post-icon datepicker form-inline mt-1" inline="true" >
+                <div id="date-picker" class="md-form md-outline input-with-post-icon datepicker form-inline ml-1 mt-1 mr-1" inline="true" >
                   <input placeholder="Select date" type="date" name=date id=date class="form-control">
                   <i class="fas fa-calendar input-prefix"></i>
-                  <input class="btn btn-outline btn-success ml-1 mt-1" type="submit" value="Mark Complete">
+                  <input class="btn btn-outline btn-success ml-1 mt-1 mb-1" type="submit" value="Mark Complete">
                 </div>
               </form>
             </div>

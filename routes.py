@@ -176,7 +176,7 @@ def item_detail():
     item = MaintenanceItem.query.filter_by(maintenanceID=id).first()
     files = UserFile.query.filter_by(owner=current_user.id, maintenanceID=id)
 
-    new_notes=request.args.get('notes')#form.get('notes')
+    new_notes=request.args.get('notes')
 
     if new_notes == None:
         new_notes = ''
@@ -366,9 +366,12 @@ def upload_file():
 
             #Get MaintenanceItem ID
             name = request.form['name']
-            maintenance_item_to_link = MaintenanceItem.query.filter_by(name=name, deleted=0).first()
-
-            file_to_add.maintenanceID = maintenance_item_to_link.maintenanceID
+            
+            if name != 'N/A':
+                print((name))
+                print(type(name))
+                maintenance_item_to_link = MaintenanceItem.query.filter_by(name=name, deleted=0).first()
+                file_to_add.maintenanceID = maintenance_item_to_link.maintenanceID
 
             db.session.add(file_to_add)
             db.session.commit()

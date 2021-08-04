@@ -1,30 +1,28 @@
 {% extends 'base.html' %}
 
 {% block title %}
-Login Page
+Upload File
 {% endblock %}
 
 {% block content%}
-	<h2>Select a File to Upload</h2>
-	<br>
-	<form action="" method=post enctype=multipart/form-data>
-      <p><input type=file name=file></p> 
-      Select Maintenance Item: 
-		<select name=name>
-			{% for item in items %}
-			<option value="{{ item.name }}">{{ item.name }}</option>
-			{% endfor %}
-		</select>
-	
-		<br><br>
-		<p><input type=submit value=Upload></p>
-	</form>
+	<div class="position-relative overflow-hidden p-3 p-md-1 text-center bg-dark" style="color:white">
+		<h2>Select a File to Upload</h2>
+		<br>
+		<form action="" method=post enctype=multipart/form-data>
+			<div class="col-md-5 p-lg-5 mx-auto my-5">
+	      <p><input class="form-control" type=file name=file></p> 
+	      <p>Select Maintenance Item: </p>
+			<select name=name>
+				{% for item in items %}
+				<option class="form-control" value="{{ item.name }}">{{ item.name }}</option>
+				{% endfor %}
+				<option>N/A</option>
+			</select>
+		
+			<br><br>
+			
+				<p><input class="btn btn-block btn-info" type=submit value=Upload></p>
+			</div>
+		</form>
+	</div>
 {% endblock %}
-	
-<!--	<form action ="{{url_for('upload_file') }}" method="POST" name="file" enctype="multipart/form-data">
-		Upload a file
-		<p><input type="file" class="form-control col-lg" required name="file"{{ form.filename() }}></p>
-		{{ form.submit(class="btn btn-sm btn-primary") }}
-	
-	</form>-->
-
