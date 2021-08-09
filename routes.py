@@ -170,13 +170,15 @@ def set_due_date():
 def item_detail():
     if request.method == 'POST':
         id = request.form.get('maintenanceID')
+        new_notes= request.form.get('notes')
     else:
         id = request.args.get('maintenanceID')
+        new_notes=request.args.get('notes')
     #flash(id)
     item = MaintenanceItem.query.filter_by(maintenanceID=id).first()
     files = UserFile.query.filter_by(owner=current_user.id, maintenanceID=id)
 
-    new_notes=request.args.get('notes')
+    
 
     if new_notes == None:
         new_notes = ''
