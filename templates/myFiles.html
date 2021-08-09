@@ -6,44 +6,51 @@
   {% block content %}
     <h1>My Maintenance Records</h1>
     <br>
+    <div>
+      <span class='float-right'>
+        <a class="btn btn-lg btn-primary" href="{{ url_for('upload_file') }}">Upload Record</a>
+      </span>
+    </div>
+    <br>
 
-    <a class="btn btn-lg btn-primary" href="{{ url_for('upload_file') }}">Upload Record</a>
+    <h5> All Files </h5>
 
-    <p></p>
+  <p></p>
 
-	<table>
-      <table class="table table-hover table-dark">
-        <thead>
+  <div>
+    <table class="table table-hover table-dark">
+      <thead>
+        <tr>
+         <!-- COLUMNS -->
+          <th scope="col">File Name</th>
+          <th scope="col">Maintenance Item</th>
+          <th scope="col">Upload Date</th>
+          <th scope="col">Options</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for file in files %}
+        
+       <!--  ROWs-->
           <tr>
-           <!-- COLUMNS -->
-            <th scope="col">File Name</th>
-            <th scope="col">Maintenance Item</th>
-            <th scope="col">Upload Date</th>
-            <th scope="col">Options</th>
+            <td><a href="/downloadFile/{{ file.filename }}">{{file.filename}}</a></td>
+            <td> {% for item in items %}
+                  {% if item.maintenanceID == file.maintenanceID %}
+                      {{ item.name }} <!--<a class="btn btn-sm btn-info" href="#">choose different file</a>-->
+                  {% endif %}
+                {% endfor %}
+            </td>
+            <td>{{ file.uploadDate }}</td>
+            <td>
+              
+              <a class="btn btn-default btn-success" a href="/downloadFile/{{file.filename}}" target="blank">Download</a>
+              <a class="btn btn-outline btn-danger" href="{{ url_for('delete_file', file_id=file.id) }}">Delete File</a>
+            </td>
           </tr>
-        </thead>
-        <tbody>
-          {% for file in files %}
-          
-         <!--  ROWs-->
-	          <tr>
-	            <td><a href="/downloadFile/{{ file.filename }}">{{file.filename}}</a></td>
-	            <td> {% for item in items %}
-                    {% if item.maintenanceID == file.maintenanceID %}
-                        {{ item.name }} <!--<a class="btn btn-sm btn-info" href="#">choose different file</a>-->
-                    {% endif %}
-                  {% endfor %}
-              </td>
-	            <td>{{ file.uploadDate }}</td>
-	            <td>
-	              
-                <a class="btn btn-default btn-success" a href="/downloadFile/{{file.filename}}" target="blank">Download</a>
-                <a class="btn btn-outline btn-danger" href="{{ url_for('delete_file', file_id=file.id) }}">Delete File</a>
-	            </td>
-	          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
     {% endblock %}
 
 

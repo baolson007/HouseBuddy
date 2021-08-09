@@ -8,7 +8,9 @@
   <h1>My Maintenance Tasks</h1>
   <br>
   <div>
-    <a class="btn btn-lg btn-primary" href="{{ url_for('add_item') }}">Add Maintenance Task</a>
+    <span class='float-right'>
+      <a class="btn btn-lg btn-primary" href="{{ url_for('add_item') }}">Add Maintenance Task</a>
+    </span>
     <a class="btn btn-lg btn-success" href="{{ url_for('completed_maintenance') }}">View Completed Tasks</a>
   </div>
   {% endblock %} 
@@ -20,7 +22,7 @@
     
   <p></p>
 
-   
+   <div>
   <table class="table table-hover table-dark">
     <thead>
       <tr>
@@ -67,6 +69,7 @@
 
                     <input class="btn btn-sm btn-info mt-1" type="submit" value="Set Due Date">
                   </div>
+                </form>
               {% endif %}
           </td>
 
@@ -94,4 +97,5 @@
       {% endfor %}
     </tbody>
   </table>
+</div>
   {% endblock %}
