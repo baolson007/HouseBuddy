@@ -80,3 +80,10 @@ class UserFile(db.Model):
     uploadDate = db.Column(db.Date, default=datetime.utcnow)
     deleted = db.Column(db.Integer(), default=0)
     maintenanceID = db.Column(db.Integer(), nullable=True)
+
+class Notes(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    parentItem = db.Column(db.Integer(), db.ForeignKey('MaintenanceItem.maintenanceID'))
+    notes = db.Column(db.String(length=2048), nullable=True, unique=False)
+
+

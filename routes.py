@@ -1,6 +1,6 @@
 from housebuddy import app, db, mail, bcrypt
 from flask import render_template, redirect, url_for, flash, request, send_file
-from housebuddy.models import MaintenanceItem, User, UserFile
+from housebuddy.models import MaintenanceItem, User, UserFile, Notes
 from housebuddy.forms import (RegisterForm, LoginForm, AddItemForm, EditItemForm, NewPasswordForm, ResetPasswordForm, CalendarForm, DatePickerForm, UserProfileForm)  #,UploadForm
 #from housebuddy import db, mail
 from flask_login import login_user, logout_user, current_user
@@ -174,23 +174,27 @@ def item_detail():
     else:
         id = request.args.get('maintenanceID')
         new_notes=request.args.get('notes')
-    #flash(id)
     item = MaintenanceItem.query.filter_by(maintenanceID=id).first()
     files = UserFile.query.filter_by(owner=current_user.id, maintenanceID=id)
 
-    
+    notes_object = None
 
     if new_notes == None:
         new_notes = ''
     else:
         item.notes = new_notes.strip()
+        notes_object = Notes(parentItem = item.maintenanceID, notes=new_notes)
+        db.session.add(notes_object)
+        
 
     db.session.commit()
 
+    notes_set = Notes.query.filter_by(parentItem=id)
+    
     if UserFile.query.filter_by(owner=current_user.id, maintenanceID=id).count()==0:
-        return render_template('itemDetail.html', item=item)
+        return render_template('itemDetail.html', item=item, notes_set=notes_set)
 
-    return render_template('itemDetail.html', item=item, files=files)
+    return render_template('itemDetail.html', item=item, files=files, notes_set=notes_set)
 
 
 @app.route('/addItem',  methods=['GET', 'POST'])

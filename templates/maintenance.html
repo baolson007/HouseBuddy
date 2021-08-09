@@ -8,8 +8,10 @@
   <h1>My Maintenance Tasks</h1>
   <br>
   <div>
-    <a class="btn btn-lg btn-primary" href="{{ url_for('add_item') }}">Add Maintenance Task</a>
     <a class="btn btn-lg btn-success" href="{{ url_for('completed_maintenance') }}">View Completed Tasks</a>
+    <span class="float-right">
+      <a class="btn btn-lg btn-primary" href="{{ url_for('add_item') }}">+ Add Maintenance Task</a>
+    </span>
   </div>
   {% endblock %} 
   <br>

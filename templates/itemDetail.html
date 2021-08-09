@@ -7,31 +7,23 @@ Details
 {% block content%}
 <div class="container">
 <body>
-	<h1>{{item.name}} Details</h1>
-  <div>
-    <a class="btn btn-md btn-primary" href="{{ url_for('maintenance') }}">Back to Current Maintenance Tasks</a>
+  <div class="text-center">
+  	<h1>"{{item.name}}" </h1>
+    <h2>Due Date: {{ item.dueDate.strftime('%m-%d-%Y')}}</h2>
+    <h2>
+      {% if item.completionDate is none %}
+        Completion Date: pending
+      {% else %}
+        Completion Date: {{ item.completionDate }}
+      {% endif %}
+    </h2>
+      <a class="btn btn-md btn-primary mt-1 mb-1" href="{{ url_for('maintenance') }}">Back to Current Maintenance Tasks</a>
   </div>
   <br>
-	<p>Task Name: {{ item.name }}</p>
-	<p>Description: {{ item.description }}</p>
-	<p>Due Date: {{ item.dueDate  }}</p>
-	<p>Completion Date: {{ item.completionDate }}</p>
-	
-  <small>
-    CAUTION:text box will overwrite all previous notes. Do not delete existing notes if you want to keep a record of them.<br>
-    SUGGESTION: append new notes to top or bottom of text box as needed 
-  </small>
-  <form action="{{ url_for('item_detail') }}" method="POST" id="itemDetail">
-    <input type="hidden" id=maintenanceID name=maintenanceID value={{item.maintenanceID}}>
-    <textarea id="notes" name="notes" rows="6" cols="75">{{ item.notes }}  
-    </textarea>
-    <br><br>
-    <input class="btn btn-info" type="submit" value="Update Notes">
-    <br><br>
-  </form>
 
-  
-  {% if files is not defined %}
+  <div class="row">
+    <div class="col">
+        {% if files is not defined %}
     <h2>No records uploaded for '{{ item.name }}'
       <span class='float-right'>
         <a class="btn btn-info" href="{{ url_for('upload_file') }}"> Upload a record</a>
@@ -40,7 +32,7 @@ Details
 
   {% else %}
 
-    <h2>Records associated with '{{item.name}}'
+    <h2>Files:
       <span class='float-right'>
         <a class="btn btn-info" href="{{ url_for('upload_file') }}"> Upload another record</a>
       </span>
@@ -59,19 +51,49 @@ Details
           {% for file in files %}
           
          <!--  ROWs-->
-	          <tr>
-	            <td><a href="/downloadFile/{{ file.filename }}">{{file.filename}}</a></td>
-	            <td>{{ file.uploadDate }}</td>
-	            <td>
-	              
+            <tr>
+              <td><a href="/downloadFile/{{ file.filename }}">{{file.filename}}</a></td>
+              <td>{{ file.uploadDate }}</td>
+              <td>
+                
                 <a class="btn btn-default btn-success" a href="/downloadFile/{{file.filename}}" target="blank">Download</a>
                 <a class="btn btn-outline btn-danger" href="{{ url_for('delete_file', file_id=file.id) }}">Delete</a>
-	            </td>
-	          </tr>
+              </td>
+            </tr>
           {% endfor %}
         </tbody>
       </table>
   {% endif %}
+ <!--   	<p>
+        <h3>Task Name:</h3>
+         {{ item.name }}
+     </p>
+
+    	<p>
+     <h3>Description:</h3>
+       {{ item.description }}-->
+     </p>
+   </div>
+   <div class="col">
+    <h3>Notes</h3>
+    <ul>
+      {% for note in notes_set %}
+        <li>{{ note.notes }}</li>
+      {% endfor %}
+    </ul>
+  </p>
+
+  <form action="{{ url_for('item_detail') }}" method="POST" id="itemDetail">
+    <input type="hidden" id=maintenanceID name=maintenanceID value={{item.maintenanceID}}>
+    <textarea id="notes" name="notes" rows="3" cols="50" placeholder="Add a note here..."></textarea>
+    <br><br>
+    <input class="btn btn-info" type="submit" value="Update Notes">
+    <br><br>
+  </form>
+</div>
+
+  
+
 </body>
 </div>
 {% endblock %}
