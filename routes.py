@@ -78,7 +78,7 @@ def date_picker():
 @app.route('/maintenance', methods=['GET','POST'])
 def maintenance():
     if current_user.is_authenticated:
-        items = MaintenanceItem.query.filter_by(owner=current_user.id, deleted=0, completionStatus=0, isSubtask=0)
+        items = MaintenanceItem.query.filter_by(owner=current_user.id, deleted=0, completionStatus=0)
         items = sorted(items, key=lambda x: x.dueDate or date(1900, 1, 1), reverse=True)
         item_cost_sum = decimal.Decimal(0.00)
         for item in items:
@@ -166,33 +166,48 @@ def set_due_date():
 
     return redirect(url_for('maintenance'))
 
+@app.route('/itemDetailSimple', methods=['GET', 'POST'])
+def item_detail_simple():
+    if request.method == 'POST':
+        id = request.form.get('maintenanceID')
+        new_notes = request.form.get('notes')        
+
+        if new_notes != None and new_notes != "".strip():
+            notes_object = Notes(parentItem = int(id), notes=new_notes)
+            db.session.add(notes_object)
+            db.session.commit()
+
+    else:
+        id = request.args.get('maintenanceID') 
+        flash(id, category="danger")
+
+    item = MaintenanceItem.query.filter_by(maintenanceID=int(id)).first()
+
+    notes_set = Notes.query.filter_by(parentItem=int(id))
+
+    return render_template('itemDetailSimple.html', item=item, notes_set=notes_set) 
+
 @app.route('/itemDetail', methods=['GET','POST'])
 def item_detail():
     if request.method == 'POST':
         id = request.form.get('maintenanceID')
         new_notes= request.form.get('notes')
+
+        # Do not write to db if notes section is blank
+        if new_notes != None and new_notes != "".strip():
+            notes_object = Notes(parentItem = int(id), notes=new_notes.strip())
+            db.session.add(notes_object)
+            db.session.commit()
     else:
         id = request.args.get('maintenanceID')
         new_notes=request.args.get('notes')
-    item = MaintenanceItem.query.filter_by(maintenanceID=id).first()
+
+    item = MaintenanceItem.query.filter_by(maintenanceID=int(id)).first()
     subtasks = MaintenanceItem.query.filter_by(parentID=item.maintenanceID)
     files = UserFile.query.filter_by(owner=current_user.id, maintenanceID=id)
-
-    notes_object = None
-
-    if new_notes == None:
-        new_notes = ''
-    else:
-        item.notes = new_notes.strip()
-        notes_object = Notes(parentItem = item.maintenanceID, notes=new_notes)
-        db.session.add(notes_object)
-        
-
-    db.session.commit()
-
     notes_set = Notes.query.filter_by(parentItem=id)
 
-    if UserFile.query.filter_by(owner=current_user.id, maintenanceID=id).count()==0:
+    if UserFile.query.filter_by(owner=current_user.id, maintenanceID=int(id)).count()==0:
         return render_template('itemDetail.html', item=item, notes_set=notes_set, subtasks=subtasks)
 
     return render_template('itemDetail.html', item=item, files=files, notes_set=notes_set, subtasks=subtasks)
@@ -218,6 +233,7 @@ def add_item():
 
             parentItem = MaintenanceItem.query.filter_by(maintenanceID=parentID).first()
 
+            #cost needs to update both ways, safeguards in place for cahnging parent cost?
             if parentItem.cost == None:
                 parentItem.cost = new_maintenance_item.cost
             else:

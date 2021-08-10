@@ -32,18 +32,23 @@
         <th class="th-sm" scope="col">Due Date</th>
         <th class="th-sm" scope="col">Cost</th>
         <th scope="col"> Options </th>
-        <!--<th scope="col">id </th> -->
       </tr>
     </thead>
     <tbody>
       {% for item in items %}
-        {% if item.isSubtask == 0 %}
+     
       <!--  ROWs-->
         <tr>
           <td>
-            <form action="{{ url_for('item_detail') }}" method="GET" id="itemDetail">
+              {% if item.isSubtask==0 %}
+              <form action="{{ url_for('item_detail') }}" method="GET" id="itemDetail">
               <input type="hidden" id=maintenanceID name=maintenanceID value={{ item.maintenanceID }}>
-              <input type="submit" class="btn btn-block btn-info" value="{{item.name}}">
+                <input type="submit" class="btn btn-block btn-info" value="{{item.name}}">
+              {% else %}
+              <form action="{{ url_for('item_detail_simple') }}" method="GET" id="itemDetail">
+              <input type="hidden" id=maintenanceID name=maintenanceID value={{ item.maintenanceID }}>
+                <input type="submit" class="btn btn-warning float-right" value="Subtask: {{item.name}}">
+              {% endif %}
             </form>
           </td>
           <td >
@@ -93,7 +98,7 @@
             </div>
           </td>
         </tr>
-        {% endif %}
+        
       {% endfor %}
     </tbody>
   </table>
