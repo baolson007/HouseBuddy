@@ -78,7 +78,7 @@ def date_picker():
 @app.route('/maintenance', methods=['GET','POST'])
 def maintenance():
     if current_user.is_authenticated:
-        items = MaintenanceItem.query.filter_by(owner=current_user.id, deleted=0, completionStatus=0)
+        items = MaintenanceItem.query.filter_by(owner=current_user.id, deleted=0, completionStatus=0, isSubtask=0)
         items = sorted(items, key=lambda x: x.dueDate or date(1900, 1, 1), reverse=True)
         item_cost_sum = decimal.Decimal(0.00)
         for item in items:
@@ -175,6 +175,7 @@ def item_detail():
         id = request.args.get('maintenanceID')
         new_notes=request.args.get('notes')
     item = MaintenanceItem.query.filter_by(maintenanceID=id).first()
+    subtasks = MaintenanceItem.query.filter_by(parentID=item.maintenanceID)
     files = UserFile.query.filter_by(owner=current_user.id, maintenanceID=id)
 
     notes_object = None
@@ -190,22 +191,38 @@ def item_detail():
     db.session.commit()
 
     notes_set = Notes.query.filter_by(parentItem=id)
-    
-    if UserFile.query.filter_by(owner=current_user.id, maintenanceID=id).count()==0:
-        return render_template('itemDetail.html', item=item, notes_set=notes_set)
 
-    return render_template('itemDetail.html', item=item, files=files, notes_set=notes_set)
+    if UserFile.query.filter_by(owner=current_user.id, maintenanceID=id).count()==0:
+        return render_template('itemDetail.html', item=item, notes_set=notes_set, subtasks=subtasks)
+
+    return render_template('itemDetail.html', item=item, files=files, notes_set=notes_set, subtasks=subtasks)
 
 
 @app.route('/addItem',  methods=['GET', 'POST'])
 def add_item():
     form = AddItemForm()
+    isSubtask = int(request.args.get('subtask'))
+    parentID = int(request.args.get('maintenanceID'))
+    
+    
     if form.validate_on_submit():
         new_maintenance_item = MaintenanceItem(name=form.name.data,
                                 description=form.description.data,
                                 owner=current_user.id,
                                 cost=form.cost.data)
         dueDate = convert_date(request.form['dueDate'])
+
+        if isSubtask == 1:
+            new_maintenance_item.isSubtask=1
+            new_maintenance_item.parentID = parentID
+
+            parentItem = MaintenanceItem.query.filter_by(maintenanceID=parentID).first()
+
+            if parentItem.cost == None:
+                parentItem.cost = new_maintenance_item.cost
+            else:
+                parentItem.cost += new_maintenance_item.cost
+
 
         new_maintenance_item.dueDate = dueDate
 
@@ -218,6 +235,10 @@ def add_item():
         for item in items:
             if item.cost != None:
                 item_cost_sum += decimal.Decimal(round(item.cost,2))
+
+       # items=MaintenanceItem.query.filter_by(owner=current_user.id, deleted=0,)
+        items = sorted(items, key=lambda x: x.dueDate or date(1900, 1, 1), reverse=True)
+
         return render_template('maintenance.html', items=items, item_cost_sum=round(item_cost_sum, 2))
     if form.errors != {}:
         for msg in form.errors.values():

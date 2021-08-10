@@ -37,8 +37,8 @@
     </thead>
     <tbody>
       {% for item in items %}
-      
-     <!--  ROWs-->
+        {% if item.isSubtask == 0 %}
+      <!--  ROWs-->
         <tr>
           <td>
             <form action="{{ url_for('item_detail') }}" method="GET" id="itemDetail">
@@ -93,6 +93,7 @@
             </div>
           </td>
         </tr>
+        {% endif %}
       {% endfor %}
     </tbody>
   </table>

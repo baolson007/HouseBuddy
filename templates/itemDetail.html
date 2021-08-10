@@ -9,7 +9,12 @@ Details
 <body>
   <div class="text-center">
   	<h1>"{{item.name}}" </h1>
-    <h2>Due Date: {{ item.dueDate.strftime('%m-%d-%Y')}}</h2>
+    <h2>Due Date:
+      {% if item.dueDate is none %}
+        pending
+      {% else %}
+        {{ item.dueDate.strftime('%m-%d-%Y')}}</h2>
+      {% endif %}
     <h2>
       {% if item.completionDate is none %}
         Completion Date: pending
@@ -23,69 +28,83 @@ Details
 
   <div class="row">
     <div class="col">
-        {% if files is not defined %}
-    <h2>No records uploaded for '{{ item.name }}'
-      <span class='float-right'>
-        <a class="btn btn-info" href="{{ url_for('upload_file') }}"> Upload a record</a>
-      </span>
-    </h2> 
-
-  {% else %}
-
-    <h2>Files:
-      <span class='float-right'>
-        <a class="btn btn-info" href="{{ url_for('upload_file') }}"> Upload another record</a>
-      </span>
-    </h2>
-
-      <table class="table table-hover table-dark">
-        <thead>
-          <tr>
-           <!-- COLUMNS -->
-            <th scope="col">File Name</th>
-            <th scope="col">Upload Date</th>
-            <th scope="col">Options</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for file in files %}
-          
-         <!--  ROWs-->
-            <tr>
-              <td><a href="/downloadFile/{{ file.filename }}">{{file.filename}}</a></td>
-              <td>{{ file.uploadDate }}</td>
-              <td>
-                
-                <a class="btn btn-default btn-success" a href="/downloadFile/{{file.filename}}" target="blank">Download</a>
-                <a class="btn btn-outline btn-danger" href="{{ url_for('delete_file', file_id=file.id) }}">Delete</a>
-              </td>
-            </tr>
+      <h2> Subtasks </h2>
+        <ul>
+          <div > <!--style="float:left">-->
+          {% for item in subtasks %}
+            <li>
+              
+              <form action="{{ url_for('item_detail') }}" method="GET" id="itemDetail">
+                <input type="hidden" id=maintenanceID name=maintenanceID value={{ item.maintenanceID }}>
+                <input type="submit" class="btn btn-outline-info btn-block" value="{{ item.name }}">
+              </form>
+          </li>
           {% endfor %}
-        </tbody>
-      </table>
-  {% endif %}
- <!--   	<p>
-        <h3>Task Name:</h3>
-         {{ item.name }}
-     </p>
+          </div>
+        </ul>
+        <form action="{{ url_for('add_item') }}" method="GET" id="itemDetail">
+          <input type="hidden" id=maintenanceID name=maintenanceID value={{item.maintenanceID}}>
+          <input type="hidden" id=subtask name=subtask value=1>
+          <input class="btn btn-block btn-info" type="submit" value="+ Add a subtask">
+        </form>
+      <br>   
 
-    	<p>
-     <h3>Description:</h3>
-       {{ item.description }}-->
-     </p>
+      {% if files is not defined %}
+        <h2>Files
+        <br>
+        <p><a class="btn btn-info" href="{{ url_for('upload_file') }}"> Upload a record</a></p>        
+        </h2> 
+
+      {% else %}
+
+        <h2>Files:
+          <span class='float-right'>
+            <a class="btn btn-info" href="{{ url_for('upload_file') }}">+ Upload another record</a>
+          </span>
+        </h2>
+
+          <table class="table table-hover table-dark">
+            <thead>
+              <tr>
+               <!-- COLUMNS -->
+                <th scope="col">File Name</th>
+                <th scope="col">Upload Date</th>
+                <th scope="col">Options</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for file in files %}
+              
+             <!--  ROWs-->
+                <tr>
+                  <td><a href="/downloadFile/{{ file.filename }}">{{file.filename}}</a></td>
+                  <td>{{ file.uploadDate }}</td>
+                  <td>
+                    
+                    <a class="btn btn-default btn-success" a href="/downloadFile/{{file.filename}}" target="blank">Download</a>
+                    <a class="btn btn-outline btn-danger" href="{{ url_for('delete_file', file_id=file.id) }}">Delete</a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+      {% endif %}
+
    </div>
    <div class="col">
-    <h3>Notes</h3>
+    <h3>Notes <small>(date created: note)</small></h3>
     <ul>
       {% for note in notes_set %}
-        <li>{{ note.notes }}</li>
+        <li>
+        {{ note.dateAdded.strftime('%m-%d-%Y') }} : {{ note.notes }}
+        </li>
       {% endfor %}
     </ul>
   </p>
 
   <form action="{{ url_for('item_detail') }}" method="POST" id="itemDetail">
     <input type="hidden" id=maintenanceID name=maintenanceID value={{item.maintenanceID}}>
-    <textarea id="notes" name="notes" rows="3" cols="50" placeholder="Add a note here..."></textarea>
+    <textarea id="notes" name="notes" rows="2" cols="45" placeholder="Add a note here..."></textarea>
     <br><br>
     <input class="btn btn-info" type="submit" value="Update Notes">
     <br><br>
@@ -97,3 +116,4 @@ Details
 </body>
 </div>
 {% endblock %}
+
