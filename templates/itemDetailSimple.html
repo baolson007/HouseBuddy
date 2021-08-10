@@ -5,45 +5,57 @@ Subtask Detail
 {% endblock %}
 
 {% block content%}
+<div class="container">
 	<h1>{{ item.name }} Detail</h1>
 	{% if item.completionStatus == 1 %}
-		<h1 style="color: lawngreen;">*** COMPLETED ON {{ item.completionDate.strftime('%m-%d-%Y')}} ***</h1>
+		<h1 style="color: lawngreen;">*** COMPLETED ***</h1>
 	{% endif %}
 
 	<br>
-	<div class="row">
-		<div class="col">
-			<h3>Notes <small>(date created: note)</small></h3>
-		      <ul>
-		        {% for note in notes_set %}
-		          <li>
-		          {{ note.dateAdded.strftime('%m-%d-%Y') }} : {{ note.notes }}
-		          </li>
-		        {% endfor %}
-		      </ul>
 
-		    <form action="{{ url_for('item_detail_simple') }}" method="POST" id="itemDetail">
-		      <input type="hidden" id=maintenanceID name=maintenanceID value={{item.maintenanceID}}>
-		      <textarea id="notes" name="notes" rows="2" cols="45" placeholder="Add a note here..."></textarea>
+		<div class="row">
+			<form action="{{ url_for('item_detail') }}" method="GET" id="itemDetail">
+		      <input type="hidden" id=maintenanceID name=maintenanceID value={{item.parentID}}>
 		      <br><br>
-		      <input class="btn btn-info" type="submit" value="Update Notes">
+		      <input class="btn btn-info ml-3" type="submit" value="Back to previous page">
 		      <br><br>
-		    </form>
-		</div> <!-- end col 1 -->
+			</form>
+		</div>
 
-	    <div class="col">
-	    	<h3>Mark Complete </h3>
-	    	<small>Select completion date</small>
-	      	
-	      	<form action="{{ url_for('mark_complete') }}" method="POST" id="markComplete">
-		        <input type="hidden" id=maintenanceID name=maintenanceID value={{ item.maintenanceID }}>
-		        
-		        <div id="date-picker" class="md-form md-outline input-with-post-icon datepicker form-inline mt-1 mr-1" inline="true" >
-		          <input placeholder="Select date" type="date" name=date id=date class="form-control">
-		          <i class="fas fa-calendar input-prefix"></i>
-		          <input class="btn btn-outline btn-success ml-1 mt-1 mb-1" type="submit" value="Mark Complete">
-		        </div>
-	    	</form>
-		</div> <!-- end col 2 -->
-	</div> <!-- end div row -->
+		<div class="row">
+			<div class="col">
+				<h3>Notes <small>(date created: note)</small></h3>
+			      <ul>
+			        {% for note in notes_set %}
+			          <li>
+			          {{ note.dateAdded.strftime('%m-%d-%Y') }} : {{ note.notes }}
+			          </li>
+			        {% endfor %}
+			      </ul>
+
+			    <form action="{{ url_for('item_detail_simple') }}" method="POST" id="itemDetail">
+			      <input type="hidden" id=maintenanceID name=maintenanceID value={{item.maintenanceID}}>
+			      <textarea id="notes" name="notes" rows="2" cols="45" placeholder="Add a note here..."></textarea>
+			      <br><br>
+			      <input class="btn btn-info" type="submit" value="Update Notes">
+			      <br><br>
+			    </form>
+			</div> <!-- end col 1 -->
+
+		    <div class="col">
+		    	<h3>Mark Complete </h3>
+		    	<small>Select completion date</small>
+		      	
+		      	<form action="{{ url_for('mark_complete') }}" method="POST" id="markComplete">
+			        <input type="hidden" id=maintenanceID name=maintenanceID value={{ item.maintenanceID }}>
+			        
+			        <div id="date-picker" class="md-form md-outline input-with-post-icon datepicker form-inline mt-1 mr-1" inline="true" >
+			          <input placeholder="Select date" type="date" name=date id=date class="form-control">
+			          <i class="fas fa-calendar input-prefix"></i>
+			          <input class="btn btn-outline btn-success ml-1 mt-1 mb-1" type="submit" value="Mark Complete">
+			        </div>
+		    	</form>
+			</div> <!-- end col 2 -->
+		</div> <!-- end div row -->
+	</div><!-- end container-->
 {% endblock %}

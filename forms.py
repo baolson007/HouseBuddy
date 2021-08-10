@@ -41,6 +41,7 @@ class EditItemForm(FlaskForm):
 	name = StringField(label='Maintenance Item Name')
 	description = StringField(label='Description')
 	dueDate=DateField(label='Due Date', validators=[Optional()])
+	completionDate=DateField(label='Completion Date', validators=[Optional()])
 	cost = DecimalField(label='Cost', validators=[Optional()])
 	submit = SubmitField(label='Submit Updated Item')
 	delete = SubmitField(label='Delete Item')

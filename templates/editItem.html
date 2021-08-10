@@ -25,6 +25,9 @@ Edit Item
 			
 			{{ form.dueDate.label() }}
 			<input placeholder="Select date" type="date" value={{item.dueDate}} name="dueDate" id="dueDate" class="form-control">
+
+			{{ form.completionDate.label() }}
+			<input placeholder="Select date" type="date" value={{item.completionDate}} name="completionDate" id="completionDate" class="form-control">
 			
 			{{ form.cost.label() }}
 			{% if item.cost != None %}

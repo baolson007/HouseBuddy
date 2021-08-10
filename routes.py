@@ -117,9 +117,21 @@ def mark_complete():
 
     completionDate = convert_date(request.form['date'])
 
+#    if completionDate == None:
+#        item = MaintenanceItem.query.filter_by(maintenanceID=int(item_id)).first()
+#        notes_set = Notes.query.filter_by(parentItem=int(item_id))
+#        return redirect( url_for('item_detail', item=item, notes_set=notes_set))
+    
     completed_item.completionDate=completionDate
     db.session.commit()
     flash('\"' + completed_item.name +'\" marked as complete, added to Completed Tasks', category="success")
+
+    if completed_item.isSubtask == 1:
+        subtasks = MaintenanceItem.query.filter_by(parentID=item.maintenanceID)
+        files = UserFile.query.filter_by(owner=current_user.id, maintenanceID=id)
+        notes_set = Notes.query.filter_by(parentItem=id)
+        return render_template('itemDetail.html', item=completed_item, files=files, notes_set=notes_set)
+
     return redirect(url_for('completed_maintenance'))
 
 
@@ -160,6 +172,13 @@ def set_due_date():
 
     dueDate = convert_date(request.form['date'])
 
+#    if dueDate == None:
+#        item = MaintenanceItem.query.filter_by(maintenanceID=int(id)).first()
+#        subtasks = MaintenanceItem.query.filter_by(parentID=item.maintenanceID)
+#        files = UserFile.query.filter_by(owner=current_user.id, maintenanceID=id)
+#        notes_set = Notes.query.filter_by(parentItem=id)
+#        return render_template('itemDetail.html', item=item, files=files , subtasks=subtasks, notes_set=notes_set)
+
     item.dueDate = dueDate
 
     db.session.commit()
@@ -179,7 +198,6 @@ def item_detail_simple():
 
     else:
         id = request.args.get('maintenanceID') 
-        flash(id, category="danger")
 
     item = MaintenanceItem.query.filter_by(maintenanceID=int(id)).first()
 
@@ -236,6 +254,8 @@ def add_item():
             #cost needs to update both ways, safeguards in place for cahnging parent cost?
             if parentItem.cost == None:
                 parentItem.cost = new_maintenance_item.cost
+            elif new_maintenance_item.cost == None:
+                pass
             else:
                 parentItem.cost += new_maintenance_item.cost
 
@@ -255,7 +275,16 @@ def add_item():
        # items=MaintenanceItem.query.filter_by(owner=current_user.id, deleted=0,)
         items = sorted(items, key=lambda x: x.dueDate or date(1900, 1, 1), reverse=True)
 
+        if isSubtask == 1:
+            item = MaintenanceItem.query.filter_by(maintenanceID=parentID).first()
+            subtasks = MaintenanceItem.query.filter_by(parentID=parentID)
+            files = UserFile.query.filter_by(owner=current_user.id, maintenanceID=parentID)
+            notes_set = Notes.query.filter_by(parentItem=parentID)
+
+            return render_template('itemDetail.html', item=item, files=files, notes_set=notes_set, subtasks=subtasks)
+
         return render_template('maintenance.html', items=items, item_cost_sum=round(item_cost_sum, 2))
+
     if form.errors != {}:
         for msg in form.errors.values():
             flash(f'Error in registration: {msg}', category='danger')
@@ -289,8 +318,12 @@ def edit_item(item_id):
         #convert to Date
         dueDate = convert_date(dueDate)
 
+        completionDate = request.form.get('completionDate')
+        completionDate = convert_date(completionDate)
+
         #write to db
-        item_to_edit.dueDate=dueDate
+        item_to_edit.dueDate = dueDate
+        item_to_edit.completionDate = completionDate
         item_to_edit.cost = form.cost.data
 
         db.session.commit()

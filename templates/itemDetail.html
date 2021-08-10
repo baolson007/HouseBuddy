@@ -7,10 +7,10 @@ Details
 {% block content%}
 <div class="container">
 <body>
-  <div class="text-center">
+  <div class="">
   	<h1>"{{item.name}}" </h1>
       {% if item.completionStatus == 1 %}
-    <h1 style="color: lawngreen;">*** COMPLETED ON {{ item.completionDate.strftime('%m-%d-%Y')}} ***</h1>
+    <h1 style="color: lawngreen;">*** COMPLETED ***</h1>
   {% endif %}
     <h3>Due Date:
       {% if item.dueDate is none %}
@@ -29,68 +29,94 @@ Details
 
   <br>
 <div class="row">
-  <a class="btn btn-md btn-primary mt-1 mb-1 mr-1 float-left" href="{{ url_for('maintenance') }}">Back to Current Maintenance Tasks</a>
+  <div class="col">
+    <a class="btn btn-md btn-primary mt-1 mb-1 mr-1 float-left" href="{{ url_for('maintenance') }}">Back to Current Maintenance Tasks</a>
+  </div> <!-- end col-->
 
-   <form action="{{ url_for('mark_complete') }}" method="POST" id="markComplete" style="display:inline">       
-    <input type="hidden" id=maintenanceID name=maintenanceID value={{ item.maintenanceID }}>
-    <div id="date-picker" class="md-form md-outline input-with-post-icon datepicker form-inline mt-1 mr-1 float-right" inline="true" >
-      
-        <input placeholder="Select date" type="date" name=date id=date class="form-control">
-        <i class="fas fa-calendar input-prefix"></i>
-        <input class="btn btn-outline btn-success ml-1 mt-1 mb-1" type="submit" value="Mark Complete">
-      
-    </div> <!-- END DATE PIKCER -->
-  </form>
+  <div class="col">
+    {% if item.completionStatus == 1 %}
+      <form action="{{ url_for('mark_incomplete') }}" method="POST">
+        <input type="hidden" id=maintenanceID name=maintenanceID value={{ item.maintenanceID }}>
+        <input class="btn btn-outline btn-danger" type="submit" value="Revert Completion Status">
+      </form>
+    {% else %}
+      <form action="{{ url_for('mark_complete') }}" method="POST" id="markComplete" style="display:inline">       
+        <input type="hidden" id=maintenanceID name=maintenanceID value={{ item.maintenanceID }}>
+        <div id="date-picker" class="md-form md-outline input-with-post-icon datepicker form-inline mt-1 mr-1" inline="true">
+          
+            <input placeholder="Select date" type="date" name=date id=date class="form-control">
+            <i class="fas fa-calendar input-prefix"></i>
+            <input class="btn btn-outline btn-success ml-1 mt-1 mb-1" type="submit" value="Mark Complete">
+          
+        </div> <!-- END DATE PIKCER -->
+      </form>
+      {% endif %}
+  </div> <!-- end col -->
 </div> <!-- END ROW -->
-  <div class="row">
-    <div class="col">
-      <h2>Subtasks </h2>
+
+<br>
+
+    <div class="row">
+      <h2>Description: {{ item.description }}
+      </h2>
+    </div>
+
+    <table class="table table-hover table-dark">
+      <tr>
+        <td>
+      <div class="row">
+      <div class=" text-center col">
+        <h2>Subtasks </h2>
+          <ul>
+            <div > 
+            {% for item in subtasks %}
+              <li>
+                
+                <form action="{{ url_for('item_detail_simple') }}" method="GET" id="itemDetail">
+                  <input type="hidden" id=maintenanceID name=maintenanceID value={{ item.maintenanceID }}>
+                  {% if item.completionStatus == 0 %}
+                    <input type="submit" class="btn btn-outline-info btn-block" value="{{ item.name }}">
+                  {% else %}
+                    <input type="submit" class="btn btn-outline-success btn-block" value="{{ item.name }}">
+                  {% endif %}
+                </form>
+              </li>
+            {% endfor %}
+            </div>
+          </ul>
+          <form action="{{ url_for('add_item') }}" method="GET" id="itemDetail">
+            <input type="hidden" id=maintenanceID name=maintenanceID value={{item.maintenanceID}}>
+            <input type="hidden" id=subtask name=subtask value=1>
+            <input class="btn btn-block btn-info" type="submit" value="+ Add a subtask">
+          </form>
+        <br> 
+
+       </div>
+       <div class=" text-center col">
+        <h3>Notes <small>(date created: note)</small></h3>
         <ul>
-          <div > 
-          {% for item in subtasks %}
-            <li>
-              
-              <form action="{{ url_for('item_detail_simple') }}" method="GET" id="itemDetail">
-                <input type="hidden" id=maintenanceID name=maintenanceID value={{ item.maintenanceID }}>
-                {% if item.completionStatus == 0 %}
-                  <input type="submit" class="btn btn-outline-info btn-block" value="{{ item.name }}">
-                {% else %}
-                  <input type="submit" class="btn btn-outline-success btn-block" value="{{ item.name }}">
-                {% endif %}
-              </form>
-            </li>
-          {% endfor %}
-          </div>
+          {% if notes_set is not none %}
+            {% for note in notes_set %}
+              <li>
+              {{ note.dateAdded.strftime('%m-%d-%Y') }} : {{ note.notes }}
+              </li>
+            {% endfor %}
+          {% endif %}
         </ul>
-        <form action="{{ url_for('add_item') }}" method="GET" id="itemDetail">
-          <input type="hidden" id=maintenanceID name=maintenanceID value={{item.maintenanceID}}>
-          <input type="hidden" id=subtask name=subtask value=1>
-          <input class="btn btn-block btn-info" type="submit" value="+ Add a subtask">
-        </form>
-      <br> 
+      </p>
 
-     </div>
-     <div class="col">
-      <h3>Notes <small>(date created: note)</small></h3>
-      <ul>
-        {% for note in notes_set %}
-          <li>
-          {{ note.dateAdded.strftime('%m-%d-%Y') }} : {{ note.notes }}
-          </li>
-        {% endfor %}
-      </ul>
-    </p>
-
-    <form action="{{ url_for('item_detail') }}" method="POST" id="itemDetail">
-      <input type="hidden" id=maintenanceID name=maintenanceID value={{item.maintenanceID}}>
-      <textarea id="notes" name="notes" rows="2" cols="45" placeholder="Add a note here..."></textarea>
-      <br><br>
-      <input class="btn btn-info" type="submit" value="Update Notes">
-      <br><br>
-    </form>
-  </div> <!-- end note col div -->
-  </div><!-----end 1st row div -->
-  
+      <form action="{{ url_for('item_detail') }}" method="POST" id="itemDetail">
+        <input type="hidden" id=maintenanceID name=maintenanceID value={{item.maintenanceID}}>
+        <textarea id="notes" name="notes" rows="2" cols="45" placeholder="Add a note here..."></textarea>
+        <br><br>
+        <input class="btn btn-info" type="submit" value="Update Notes">
+        <br><br>
+      </form>
+    </div> <!-- end note col div -->
+    </div><!-----end 1st row div -->
+  </td>
+</tr>
+  </table>
   <div class="row">
 
       {% if files is not defined %}
