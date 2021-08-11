@@ -43,6 +43,13 @@ Subtask Detail
 			</div> <!-- end col 1 -->
 
 		    <div class="col">
+		    	{% if item.completionStatus == 1 %}
+		    		<h3>Revert Completion Status</h3>
+			      <form action="{{ url_for('mark_incomplete') }}" method="POST">
+			        <input type="hidden" id=maintenanceID name=maintenanceID value={{ item.maintenanceID }}>
+			        <input class="btn btn-outline btn-danger" type="submit" value="Revert Completion Status">
+			      </form>
+			    {% else %}
 		    	<h3>Mark Complete </h3>
 		    	<small>Select completion date</small>
 		      	
@@ -55,6 +62,7 @@ Subtask Detail
 			          <input class="btn btn-outline btn-success ml-1 mt-1 mb-1" type="submit" value="Mark Complete">
 			        </div>
 		    	</form>
+		    	{% endif %}
 			</div> <!-- end col 2 -->
 		</div> <!-- end div row -->
 	</div><!-- end container-->

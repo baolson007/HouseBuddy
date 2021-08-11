@@ -127,9 +127,11 @@ def mark_complete():
     flash('\"' + completed_item.name +'\" marked as complete, added to Completed Tasks', category="success")
 
     if completed_item.isSubtask == 1:
-        subtasks = MaintenanceItem.query.filter_by(parentID=item.maintenanceID)
-        files = UserFile.query.filter_by(owner=current_user.id, maintenanceID=id)
-        notes_set = Notes.query.filter_by(parentItem=id)
+        subtasks = MaintenanceItem.query.filter_by(parentID=completed_item.parentID)
+        files = UserFile.query.filter_by(owner=current_user.id, maintenanceID=completed_item.parentID)
+        notes_set = Notes.query.filter_by(parentItem=completed_item.parentID)
+        item = MaintenanceItem.query.filter_by(maintenanceID=completed_item.parentID).first()
+
         return render_template('itemDetail.html', item=completed_item, files=files, notes_set=notes_set)
 
     return redirect(url_for('completed_maintenance'))
@@ -151,6 +153,15 @@ def mark_incomplete():
 
     flash("\"" + reverted_item.name + "\"" +
         " removed from COMPLETED to \'My Maintenance Tasks\'", category="danger")
+
+    if reverted_item.isSubtask == 1:
+        subtasks = MaintenanceItem.query.filter_by(parentID=reverted_item.parentID)
+        files = UserFile.query.filter_by(owner=current_user.id, maintenanceID=reverted_item.parentID)
+        notes_set = Notes.query.filter_by(parentItem=reverted_item.parentID)
+        item = MaintenanceItem.query.filter_by(maintenanceID=reverted_item.parentID).first()
+        
+        return render_template('itemDetail.html', item=item, files=files, subtasks=subtasks, notes_set=notes_set)
+
     return redirect(url_for('maintenance'))
 
 
