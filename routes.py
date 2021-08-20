@@ -244,10 +244,7 @@ def item_detail():
 
 @app.route('/addItem',  methods=['GET', 'POST'])
 def add_item():
-    form = AddItemForm()
-    isSubtask = int(request.args.get('subtask'))
-    parentID = int(request.args.get('maintenanceID'))
-    
+    form = AddItemForm()    
     
     if form.validate_on_submit():
         new_maintenance_item = MaintenanceItem(name=form.name.data,
@@ -256,7 +253,16 @@ def add_item():
                                 cost=form.cost.data)
         dueDate = convert_date(request.form['dueDate'])
 
+        isSubtask = None
+
+        try:
+            isSubtask = int(request.args.get('subtask'))
+        except:
+            print('subtask request is None')
+
         if isSubtask == 1:
+            parentID = int(request.args.get('maintenanceID'))
+
             new_maintenance_item.isSubtask=1
             new_maintenance_item.parentID = parentID
 
@@ -287,6 +293,7 @@ def add_item():
         items = sorted(items, key=lambda x: x.dueDate or date(1900, 1, 1), reverse=True)
 
         if isSubtask == 1:
+            parentID = int(request.args.get('maintenanceID'))
             item = MaintenanceItem.query.filter_by(maintenanceID=parentID).first()
             subtasks = MaintenanceItem.query.filter_by(parentID=parentID)
             files = UserFile.query.filter_by(owner=current_user.id, maintenanceID=parentID)
