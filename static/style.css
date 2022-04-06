@@ -1,9 +1,8 @@
 .carousel-caption {
-    position: relative;
-    left: 0;
-    top: 0;
+  position: relative;
+  left: 0;
+  top: 0;
 }
-
 
 .carousel-control-prev-icon,
 .carousel-control-next-icon {
@@ -14,16 +13,24 @@
   border-radius: 25%;
   border: 1px solid black;
   background-image: none;
+  background-color: white;
+  padding-bottom: 1rem;
 }
-.carousel-control-next-icon:after
-{
-  content: '>';
+.carousel-control-next-icon::after {
+  content: ">";
   font-size: 55px;
   color: red;
+  filter: invert(100%);
 }
 
-.carousel-control-prev-icon:after {
-  content: '<';
+.carousel-control-prev-icon::after {
+  content: "<";
   font-size: 55px;
   color: red;
+  filter: invert(100%);
+}
+
+.carousel-inner > .carousel-item > img,
+.carousel-inner > .item > a > img {
+  width: 100%;
 }

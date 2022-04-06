@@ -36,3 +36,4 @@ from housebuddy import routes
 
 #db.create_all()
 #db.session.commit()
+#
