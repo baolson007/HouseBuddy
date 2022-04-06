@@ -68,7 +68,8 @@ class MaintenanceItem(db.Model):
     owner = db.Column(db.Integer(), db.ForeignKey('user.id'))
     cost = db.Column(db.Numeric(), nullable=True)
     deleted = db.Column(db.Integer(), nullable=True, default=0)
-    notes = db.Column(db.String(length=2048), nullable=True, unique=False)
+    isSubtask = db.Column(db.Integer(), default=0)
+    parentID = db.Column(db.Integer(), default=0)
 
     def __repr__(self):
         return f'Maintenance: {self.name}'
@@ -80,3 +81,11 @@ class UserFile(db.Model):
     uploadDate = db.Column(db.Date, default=datetime.utcnow)
     deleted = db.Column(db.Integer(), default=0)
     maintenanceID = db.Column(db.Integer(), nullable=True)
+
+class Notes(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    parentItem = db.Column(db.Integer(), db.ForeignKey('MaintenanceItem.maintenanceID'))
+    notes = db.Column(db.String(length=2048), nullable=True, unique=False)
+    dateAdded = db.Column(db.Date, default=datetime.utcnow)
+
+

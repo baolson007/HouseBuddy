@@ -8,10 +8,15 @@
   <h1>My Maintenance Tasks</h1>
   <br>
   <div>
+
     <span class='float-right'>
       <a class="btn btn-lg btn-primary" href="{{ url_for('add_item') }}">Add Maintenance Task</a>
     </span>
+
     <a class="btn btn-lg btn-success" href="{{ url_for('completed_maintenance') }}">View Completed Tasks</a>
+    <span class="float-right">
+      <a class="btn btn-lg btn-primary" href="{{ url_for('add_item') }}">+ Add Maintenance Task</a>
+    </span>
   </div>
   {% endblock %} 
   <br>
@@ -32,44 +37,57 @@
         <th class="th-sm" scope="col">Due Date</th>
         <th class="th-sm" scope="col">Cost</th>
         <th scope="col"> Options </th>
-        <!--<th scope="col">id </th> -->
       </tr>
     </thead>
     <tbody>
       {% for item in items %}
-      
-     <!--  ROWs-->
+     
+      <!--  ROWs-->
         <tr>
           <td>
-            <form action="{{ url_for('item_detail') }}" method="GET" id="itemDetail">
+              {% if item.isSubtask==0 %}
+              <form action="{{ url_for('item_detail') }}" method="GET" id="itemDetail">
               <input type="hidden" id=maintenanceID name=maintenanceID value={{ item.maintenanceID }}>
-              <input type="submit" class="btn btn-block btn-info" value="{{item.name}}">
+                <input type="submit" class="btn btn-block btn-info" value="{{item.name}}">
+              {% else %}
+              <form action="{{ url_for('item_detail_simple') }}" method="GET" id="itemDetail">
+              <input type="hidden" id=maintenanceID name=maintenanceID value={{ item.maintenanceID }}>
+                <input type="submit" class="btn btn-block btn-warning" value="Subtask: {{item.name}}">
+              {% endif %}
             </form>
           </td>
           <td >
               {{ item.description }}
           </td>
-          <td class="{{ 'red' if item.dueDate is not none and item.dueDate < item.dueDate.today() }}">
-            <style>
-                  .red {
-                      color: red;
-                  }
-            </style>
+          
+            <td class="{{ 'red' if item.dueDate is not none and item.dueDate < item.dueDate.today() }}">
+              <style>
+                    .red {
+                        color: red;
+                    }
+              </style>
+            {% if item.isSubtask ==0 %}
+              {% if item.dueDate != None %}
+                {{ item.dueDate.strftime('%m-%d-%Y') }}
+              {% else %}
+                  <form action="{{ url_for('set_due_date') }}" method="POST" id="setDueDate">
+                    <input type="hidden" id=maintenanceID name=maintenanceID value={{ item.maintenanceID }}>
+                
+                    <div id="date-picker" class="md-form md-outline input-with-post-icon datepicker mt-1" inline="true">
+                      
+                      <input placeholder="Select date" type="date" name=date id=date class="form-control">
+                      <i class="fas fa-calendar input-prefix"></i>
 
-            {% if item.dueDate != None %}
-              {{ item.dueDate.strftime('%m-%d-%Y') }}
-            {% else %}
-                <form action="{{ url_for('set_due_date') }}" method="POST" id="setDueDate">
-                  <input type="hidden" id=maintenanceID name=maintenanceID value={{ item.maintenanceID }}>
-              
-                  <div id="date-picker" class="md-form md-outline input-with-post-icon datepicker mt-1" inline="true">
-                    
-                    <input placeholder="Select date" type="date" name=date id=date class="form-control">
-                    <i class="fas fa-calendar input-prefix"></i>
-
+<<<<<<< HEAD
                     <input class="btn btn-sm btn-info mt-1" type="submit" value="Set Due Date">
                   </div>
                 </form>
+=======
+                      <input class="btn btn-sm btn-info mt-1" type="submit" value="Set Due Date">
+                    </div>
+                  </form>
+                {% endif %}
+>>>>>>> 6b9817a233053a7d7dad6f3f7044da11acd3729a
               {% endif %}
           </td>
 
@@ -81,19 +99,24 @@
           </td>
           <td>
             <a class="btn btn-outline btn-info ml-1" href="{{ url_for('edit_item', item_id=item.maintenanceID) }}">Edit/Delete</a>
-            <div>
-              <form action="{{ url_for('mark_complete') }}" method="POST" id="markComplete">
-                <input type="hidden" id=maintenanceID name=maintenanceID value={{ item.maintenanceID }}>
-                
-                <div id="date-picker" class="md-form md-outline input-with-post-icon datepicker form-inline ml-1 mt-1 mr-1" inline="true" >
-                  <input placeholder="Select date" type="date" name=date id=date class="form-control">
-                  <i class="fas fa-calendar input-prefix"></i>
-                  <input class="btn btn-outline btn-success ml-1 mt-1 mb-1" type="submit" value="Mark Complete">
-                </div>
-              </form>
-            </div>
+            {% if item.isSubtask ==0 %}
+              <div>
+                <form action="{{ url_for('mark_complete') }}" method="POST" id="markComplete">
+                  <input type="hidden" id=maintenanceID name=maintenanceID value={{ item.maintenanceID }}>
+                  
+                  <div id="date-picker" class="md-form md-outline input-with-post-icon datepicker form-inline ml-1 mt-1 mr-1" inline="true" >
+                    <input placeholder="Select date" type="date" name=date id=date class="form-control">
+                    <i class="fas fa-calendar input-prefix"></i>
+                    <input class="btn btn-outline btn-success ml-1 mt-1 mb-1" type="submit" value="Mark Complete">
+                  </div>
+                </form>
+              </div>
+            {% else %}
+
+            {% endif %}
           </td>
         </tr>
+        
       {% endfor %}
     </tbody>
   </table>

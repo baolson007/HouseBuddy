@@ -7,71 +7,169 @@ Details
 {% block content%}
 <div class="container">
 <body>
-	<h1>{{item.name}} Details</h1>
-  <div>
-    <a class="btn btn-md btn-primary" href="{{ url_for('maintenance') }}">Back to Current Maintenance Tasks</a>
-  </div>
-  <br>
-	<p>Task Name: {{ item.name }}</p>
-	<p>Description: {{ item.description }}</p>
-	<p>Due Date: {{ item.dueDate  }}</p>
-	<p>Completion Date: {{ item.completionDate }}</p>
-	
-  <small>
-    CAUTION:text box will overwrite all previous notes. Do not delete existing notes if you want to keep a record of them.<br>
-    SUGGESTION: append new notes to top or bottom of text box as needed 
-  </small>
-  <form action="{{ url_for('item_detail') }}" method="POST" id="itemDetail">
-    <input type="hidden" id=maintenanceID name=maintenanceID value={{item.maintenanceID}}>
-    <textarea id="notes" name="notes" rows="6" cols="75">{{ item.notes }}  
-    </textarea>
-    <br><br>
-    <input class="btn btn-info" type="submit" value="Update Notes">
-    <br><br>
-  </form>
-
-  
-  {% if files is not defined %}
-    <h2>No records uploaded for '{{ item.name }}'
-      <span class='float-right'>
-        <a class="btn btn-info" href="{{ url_for('upload_file') }}"> Upload a record</a>
-      </span>
-    </h2> 
-
-  {% else %}
-
-    <h2>Records associated with '{{item.name}}'
-      <span class='float-right'>
-        <a class="btn btn-info" href="{{ url_for('upload_file') }}"> Upload another record</a>
-      </span>
-    </h2>
-
-      <table class="table table-hover table-dark">
-        <thead>
-          <tr>
-           <!-- COLUMNS -->
-            <th scope="col">File Name</th>
-            <th scope="col">Upload Date</th>
-            <th scope="col">Options</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for file in files %}
-          
-         <!--  ROWs-->
-	          <tr>
-	            <td><a href="/downloadFile/{{ file.filename }}">{{file.filename}}</a></td>
-	            <td>{{ file.uploadDate }}</td>
-	            <td>
-	              
-                <a class="btn btn-default btn-success" a href="/downloadFile/{{file.filename}}" target="blank">Download</a>
-                <a class="btn btn-outline btn-danger" href="{{ url_for('delete_file', file_id=file.id) }}">Delete</a>
-	            </td>
-	          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+  <div class="">
+  	<h1>"{{item.name}}" </h1>
+      {% if item.completionStatus == 1 %}
+    <h1 style="color: lawngreen;">*** COMPLETED ***</h1>
   {% endif %}
+    <h3>Due Date:
+      {% if item.dueDate is none %}
+        pending
+      {% else %}
+        {{ item.dueDate.strftime('%m-%d-%Y')}}
+      {% endif %}
+    ||
+      {% if item.completionDate is none %}
+        Completion Date: pending
+      {% else %}
+        Completion Date: {{ item.completionDate }}
+      {% endif %}
+    </h3>
+  </div> <!-- end text-center div -->
+
+  <br>
+<div class="row">
+  <div class="col">
+    <a class="btn btn-md btn-primary mt-1 mb-1 mr-1 float-left" href="{{ url_for('maintenance') }}">Back to Current Maintenance Tasks</a>
+  </div> <!-- end col-->
+
+  <div class="col">
+    {% if item.completionStatus == 1 %}
+      <form action="{{ url_for('mark_incomplete') }}" method="POST">
+        <input type="hidden" id=maintenanceID name=maintenanceID value={{ item.maintenanceID }}>
+        <input class="btn btn-outline btn-danger" type="submit" value="Revert Completion Status">
+      </form>
+    {% else %}
+      <form action="{{ url_for('mark_complete') }}" method="POST" id="markComplete" style="display:inline">       
+        <input type="hidden" id=maintenanceID name=maintenanceID value={{ item.maintenanceID }}>
+        <div id="date-picker" class="md-form md-outline input-with-post-icon datepicker form-inline mt-1 mr-1" inline="true">
+          
+            <input placeholder="Select date" type="date" name=date id=date class="form-control">
+            <i class="fas fa-calendar input-prefix"></i>
+            <input class="btn btn-outline btn-success ml-1 mt-1 mb-1" type="submit" value="Mark Complete">
+          
+        </div> <!-- END DATE PIKCER -->
+      </form>
+      {% endif %}
+  </div> <!-- end col -->
+</div> <!-- END ROW -->
+
+<br>
+
+    <div class="row">
+      <h2>Description: {{ item.description }}
+      </h2>
+    </div>
+
+    <table class="table table-hover table-dark">
+      <tr>
+        <td>
+      <div class="row">
+      <div class=" text-center col">
+        <h2>Subtasks </h2>
+          <ul>
+            <div > 
+            {% for item in subtasks %}
+              <li>
+                
+                <form action="{{ url_for('item_detail_simple') }}" method="GET" id="itemDetail">
+                  <input type="hidden" id=maintenanceID name=maintenanceID value={{ item.maintenanceID }}>
+                  {% if item.completionStatus == 0 %}
+                    <input type="submit" class="btn btn-outline-info btn-block" value="{{ item.name }}">
+                  {% else %}
+                    <input type="submit" class="btn btn-outline-success btn-block" value="{{ item.name }}">
+                  {% endif %}
+                </form>
+              </li>
+            {% endfor %}
+            </div>
+          </ul>
+          <form action="{{ url_for('add_item') }}" method="GET" id="itemDetail">
+            <input type="hidden" id=maintenanceID name=maintenanceID value={{item.maintenanceID}}>
+            <input type="hidden" id=subtask name=subtask value=1>
+            <input class="btn btn-block btn-info" type="submit" value="+ Add a subtask">
+          </form>
+        <br> 
+
+       </div>
+       <div class=" text-center col">
+        <h3>Notes <small>(date created: note)</small></h3>
+        <ul>
+          {% if notes_set is not none %}
+            {% for note in notes_set %}
+              <li>
+              {{ note.dateAdded.strftime('%m-%d-%Y') }} : {{ note.notes }}
+              </li>
+            {% endfor %}
+          {% endif %}
+        </ul>
+      </p>
+
+      <form action="{{ url_for('item_detail') }}" method="POST" id="itemDetail">
+        <input type="hidden" id=maintenanceID name=maintenanceID value={{item.maintenanceID}}>
+        <textarea id="notes" name="notes" rows="2" cols="45" placeholder="Add a note here..."></textarea>
+        <br><br>
+        <input class="btn btn-info" type="submit" value="Update Notes">
+        <br><br>
+      </form>
+    </div> <!-- end note col div -->
+    </div><!-----end 1st row div -->
+  </td>
+</tr>
+  </table>
+  <div class="row">
+
+      {% if files is not defined %}
+        <h2>Files</h2>
+ 
+          <a class="btn btn-block btn-info float-right ml-1" href="{{ url_for('upload_file') }}"> Upload a record</a>
+
+      {% else %}
+        <div class="container">
+          <h2>Files:
+            <a class="btn btn-info float-right mb-1" href="{{ url_for('upload_file') }}">+ Upload another record</a>
+          </h2>
+          <table class="table table-hover table-dark">
+            <thead>
+              <tr>
+               <!-- COLUMNS -->
+                <th scope="col">File Name</th>
+                <th scope="col">Upload Date</th>
+                <th scope="col">Options</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for file in files %}
+              
+             <!--  ROWs-->
+                <tr>
+                  <td><a href="/downloadFile/{{ file.filename }}">{{file.filename}}</a></td>
+                  <td>{{ file.uploadDate }}</td>
+                  <td>                    
+                    <a class="btn btn-default btn-success" a href="/downloadFile/{{file.filename}}" target="blank">Download</a>
+                    <a class="btn btn-outline btn-danger" href="{{ url_for('delete_file', file_id=file.id) }}">Delete</a>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+    {% endif %}
+    </div>
+  </div>
+
 </body>
-</div>
 {% endblock %}
+<!-- 
+
+    <form action="{{ url_for('mark_complete') }}" method="POST" id="markComplete" style="display:inline">        
+      <input type="hidden" id=maintenanceID name=maintenanceID value={{ item.maintenanceID }}>
+      <div id="date-picker" class="md-form md-outline input-with-post-icon datepicker form-inline float-center mt-1 mr-1 float-right" inline="true" >
+        <span class="float-right">
+
+          <input placeholder="Select date" type="date" name=date id=date class="form-control">
+          <i class="fas fa-calendar input-prefix"></i>
+          <input class="btn btn-outline btn-success ml-1 mt-1 mb-1" type="submit" value="Mark Complete">
+        </span>
+      </div>
+    </form>
+-->

@@ -1,6 +1,6 @@
 from housebuddy import app, db, mail, bcrypt
 from flask import render_template, redirect, url_for, flash, request, send_file
-from housebuddy.models import MaintenanceItem, User, UserFile
+from housebuddy.models import MaintenanceItem, User, UserFile, Notes
 from housebuddy.forms import (RegisterForm, LoginForm, AddItemForm, EditItemForm, NewPasswordForm, ResetPasswordForm, CalendarForm, DatePickerForm, UserProfileForm)  #,UploadForm
 #from housebuddy import db, mail
 from flask_login import login_user, logout_user, current_user
@@ -117,9 +117,23 @@ def mark_complete():
 
     completionDate = convert_date(request.form['date'])
 
+#    if completionDate == None:
+#        item = MaintenanceItem.query.filter_by(maintenanceID=int(item_id)).first()
+#        notes_set = Notes.query.filter_by(parentItem=int(item_id))
+#        return redirect( url_for('item_detail', item=item, notes_set=notes_set))
+    
     completed_item.completionDate=completionDate
     db.session.commit()
     flash('\"' + completed_item.name +'\" marked as complete, added to Completed Tasks', category="success")
+
+    if completed_item.isSubtask == 1:
+        subtasks = MaintenanceItem.query.filter_by(parentID=completed_item.parentID)
+        files = UserFile.query.filter_by(owner=current_user.id, maintenanceID=completed_item.parentID)
+        notes_set = Notes.query.filter_by(parentItem=completed_item.parentID)
+        item = MaintenanceItem.query.filter_by(maintenanceID=completed_item.parentID).first()
+
+        return render_template('itemDetail.html', item=completed_item, files=files, notes_set=notes_set)
+
     return redirect(url_for('completed_maintenance'))
 
 
@@ -139,6 +153,15 @@ def mark_incomplete():
 
     flash("\"" + reverted_item.name + "\"" +
         " removed from COMPLETED to \'My Maintenance Tasks\'", category="danger")
+
+    if reverted_item.isSubtask == 1:
+        subtasks = MaintenanceItem.query.filter_by(parentID=reverted_item.parentID)
+        files = UserFile.query.filter_by(owner=current_user.id, maintenanceID=reverted_item.parentID)
+        notes_set = Notes.query.filter_by(parentItem=reverted_item.parentID)
+        item = MaintenanceItem.query.filter_by(maintenanceID=reverted_item.parentID).first()
+        
+        return render_template('itemDetail.html', item=item, files=files, subtasks=subtasks, notes_set=notes_set)
+
     return redirect(url_for('maintenance'))
 
 
@@ -160,48 +183,99 @@ def set_due_date():
 
     dueDate = convert_date(request.form['date'])
 
+#    if dueDate == None:
+#        item = MaintenanceItem.query.filter_by(maintenanceID=int(id)).first()
+#        subtasks = MaintenanceItem.query.filter_by(parentID=item.maintenanceID)
+#        files = UserFile.query.filter_by(owner=current_user.id, maintenanceID=id)
+#        notes_set = Notes.query.filter_by(parentItem=id)
+#        return render_template('itemDetail.html', item=item, files=files , subtasks=subtasks, notes_set=notes_set)
+
     item.dueDate = dueDate
 
     db.session.commit()
 
     return redirect(url_for('maintenance'))
 
+@app.route('/itemDetailSimple', methods=['GET', 'POST'])
+def item_detail_simple():
+    if request.method == 'POST':
+        id = request.form.get('maintenanceID')
+        new_notes = request.form.get('notes')        
+
+        if new_notes != None and new_notes != "".strip():
+            notes_object = Notes(parentItem = int(id), notes=new_notes)
+            db.session.add(notes_object)
+            db.session.commit()
+
+    else:
+        id = request.args.get('maintenanceID') 
+
+    item = MaintenanceItem.query.filter_by(maintenanceID=int(id)).first()
+
+    notes_set = Notes.query.filter_by(parentItem=int(id))
+
+    return render_template('itemDetailSimple.html', item=item, notes_set=notes_set) 
+
 @app.route('/itemDetail', methods=['GET','POST'])
 def item_detail():
     if request.method == 'POST':
         id = request.form.get('maintenanceID')
         new_notes= request.form.get('notes')
+
+        # Do not write to db if notes section is blank
+        if new_notes != None and new_notes != "".strip():
+            notes_object = Notes(parentItem = int(id), notes=new_notes.strip())
+            db.session.add(notes_object)
+            db.session.commit()
     else:
         id = request.args.get('maintenanceID')
         new_notes=request.args.get('notes')
-    #flash(id)
-    item = MaintenanceItem.query.filter_by(maintenanceID=id).first()
+
+    item = MaintenanceItem.query.filter_by(maintenanceID=int(id)).first()
+    subtasks = MaintenanceItem.query.filter_by(parentID=item.maintenanceID)
     files = UserFile.query.filter_by(owner=current_user.id, maintenanceID=id)
+    notes_set = Notes.query.filter_by(parentItem=id)
 
-    
+    if UserFile.query.filter_by(owner=current_user.id, maintenanceID=int(id)).count()==0:
+        return render_template('itemDetail.html', item=item, notes_set=notes_set, subtasks=subtasks)
 
-    if new_notes == None:
-        new_notes = ''
-    else:
-        item.notes = new_notes.strip()
-
-    db.session.commit()
-
-    if UserFile.query.filter_by(owner=current_user.id, maintenanceID=id).count()==0:
-        return render_template('itemDetail.html', item=item)
-
-    return render_template('itemDetail.html', item=item, files=files)
+    return render_template('itemDetail.html', item=item, files=files, notes_set=notes_set, subtasks=subtasks)
 
 
 @app.route('/addItem',  methods=['GET', 'POST'])
 def add_item():
-    form = AddItemForm()
+    form = AddItemForm()    
+    
     if form.validate_on_submit():
         new_maintenance_item = MaintenanceItem(name=form.name.data,
                                 description=form.description.data,
                                 owner=current_user.id,
                                 cost=form.cost.data)
         dueDate = convert_date(request.form['dueDate'])
+
+        isSubtask = None
+
+        try:
+            isSubtask = int(request.args.get('subtask'))
+        except:
+            print('subtask request is None')
+
+        if isSubtask == 1:
+            parentID = int(request.args.get('maintenanceID'))
+
+            new_maintenance_item.isSubtask=1
+            new_maintenance_item.parentID = parentID
+
+            parentItem = MaintenanceItem.query.filter_by(maintenanceID=parentID).first()
+
+            #cost needs to update both ways, safeguards in place for cahnging parent cost?
+            if parentItem.cost == None:
+                parentItem.cost = new_maintenance_item.cost
+            elif new_maintenance_item.cost == None:
+                pass
+            else:
+                parentItem.cost += new_maintenance_item.cost
+
 
         new_maintenance_item.dueDate = dueDate
 
@@ -214,7 +288,21 @@ def add_item():
         for item in items:
             if item.cost != None:
                 item_cost_sum += decimal.Decimal(round(item.cost,2))
+
+       # items=MaintenanceItem.query.filter_by(owner=current_user.id, deleted=0,)
+        items = sorted(items, key=lambda x: x.dueDate or date(1900, 1, 1), reverse=True)
+
+        if isSubtask == 1:
+            parentID = int(request.args.get('maintenanceID'))
+            item = MaintenanceItem.query.filter_by(maintenanceID=parentID).first()
+            subtasks = MaintenanceItem.query.filter_by(parentID=parentID)
+            files = UserFile.query.filter_by(owner=current_user.id, maintenanceID=parentID)
+            notes_set = Notes.query.filter_by(parentItem=parentID)
+
+            return render_template('itemDetail.html', item=item, files=files, notes_set=notes_set, subtasks=subtasks)
+
         return render_template('maintenance.html', items=items, item_cost_sum=round(item_cost_sum, 2))
+
     if form.errors != {}:
         for msg in form.errors.values():
             flash(f'Error in registration: {msg}', category='danger')
@@ -248,8 +336,12 @@ def edit_item(item_id):
         #convert to Date
         dueDate = convert_date(dueDate)
 
+        completionDate = request.form.get('completionDate')
+        completionDate = convert_date(completionDate)
+
         #write to db
-        item_to_edit.dueDate=dueDate
+        item_to_edit.dueDate = dueDate
+        item_to_edit.completionDate = completionDate
         item_to_edit.cost = form.cost.data
 
         db.session.commit()
